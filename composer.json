@@ -1,0 +1,95 @@
+{
+    "name": "miquido/request-data-collector",
+    "description": "Library used to collect request data during its lifetime.",
+    "authors": [
+        {
+            "name": "Maciej Kudas",
+            "email": "maciejkudas@gmail.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Łukasz Legenc",
+            "email": "lukasz.legenc@miquido.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Maksymilian Lewicki",
+            "email": "maksymilian.lewicki@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "keywords": [
+        "request",
+        "data-collector",
+        "request-data-collector",
+        "collector"
+    ],
+    "homepage": "https://github.com/miquido/request-data-collector",
+    "license": "Apache-2.0",
+    "require": {
+        "php": ">=7.2",
+        "illuminate/contracts": "5.6.*|5.7.*",
+        "illuminate/database": "5.6.*|5.7.*",
+        "illuminate/log": "5.6.*|5.7.*",
+        "illuminate/routing": "5.6.*|5.7.*",
+        "illuminate/support": "5.6.*|5.7.*"
+    },
+    "suggest": {
+        "miquido/request-data-collector-guzzle": "Allows collecting Guzzle requests",
+        "miquido/request-data-collector-elasticsearch": "Allows collecting Elasticsearch requests"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "nesbot/carbon": "^1.26.3 || ^2.0",
+        "phpstan/phpstan": "^0.11.5",
+        "phpstan/phpstan-phpunit": "^0.11.0",
+        "phpunit/phpunit": "^8.0",
+        "roave/security-advisories": "dev-master",
+        "symfony/var-dumper": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Miquido\\RequestDataCollector\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Miquido\\RequestDataCollector\\RequestDataCollectorServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "cs-check": [
+            "php-cs-fixer fix -v --diff --dry-run --stop-on-violation --ansi"
+        ],
+        "lint": [
+            "php-cs-fixer fix -v --dry-run --diff --ansi"
+        ],
+        "fix": [
+            "php-cs-fixer fix -v --ansi"
+        ],
+        "code-analyse": [
+            "phpstan analyse -l 1 src --memory-limit=512M --ansi",
+            "phpstan analyse -l 1 tests -c phpstan.tests.neon --memory-limit=512M --ansi"
+        ],
+        "test-unit": [
+            "phpunit --colors=always"
+        ],
+        "test": [
+            "@cs-check",
+            "@code-analyse",
+            "@test-unit"
+        ]
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    }
+}
