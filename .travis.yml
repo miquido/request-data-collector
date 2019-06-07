@@ -20,14 +20,18 @@ matrix:
 
 env:
   matrix:
-    - DEPENDENCIES="highest"
-    - DEPENDENCIES="lowest"
+    - DEPENDENCIES="lowest"   LARAVEL="5.6.*"
+    - DEPENDENCIES="lowest"   LARAVEL="5.7.*"
+    - DEPENDENCIES="lowest"   LARAVEL="5.8.*"
+    - DEPENDENCIES="highest"  LARAVEL="5.6.*"
+    - DEPENDENCIES="highest"  LARAVEL="5.7.*"
+    - DEPENDENCIES="highest"  LARAVEL="5.8.*"
   global:
     - DEFAULT_COMPOSER_FLAGS="--no-interaction --no-ansi --no-progress --no-suggest --no-scripts --optimize-autoloader --classmap-authoritative"
 
 install:
-  - if [[ "$DEPENDENCIES" = 'highest' ]]; then composer update $DEFAULT_COMPOSER_FLAGS; fi
-  - if [[ "$DEPENDENCIES" = 'lowest' ]]; then composer update $DEFAULT_COMPOSER_FLAGS --prefer-lowest; fi
+  - if [[ "$DEPENDENCIES" = 'lowest' ]]; then export DEFAULT_COMPOSER_FLAGS="$DEFAULT_COMPOSER_FLAGS --prefer-lowest"; fi
+  - composer require illuminate/contracts:${LARAVEL} illuminate/database:${LARAVEL} illuminate/log:${LARAVEL} illuminate/routing:${LARAVEL} illuminate/support:${LARAVEL} $DEFAULT_COMPOSER_FLAGS
 
 before_script:
   - if php --ri xdebug >/dev/null; then phpenv config-rm xdebug.ini; fi
