@@ -179,3 +179,15 @@ Each entry consists of:
 **with** containing data provided for filter class constructor (e.g. `'userAgents' => ['Docker HEALTHCHECK'], ...`). Note: Laravel's container is used here so it is possible to make use of Dependency Injection.
 
 Feel fre to use one of available filters (see `src/Filters` directory) or write your own.
+
+## Tracking the request through many services
+
+You can track request through many services. When `Request ID` is being generated, it is firstly checked if there is `X-REQUEST-ID` header present in the request, and its value is being used instead. This way You can see same `Request ID` in logs.
+
+When there is no `X-REQUEST-ID` header available, You can still set Your custom `Request ID` via `\Miquido\RequestDataCollector\RequestDataCollector::setRequestId()` method.
+
+In both cases `Request ID` has to be in following format:
+
+`X[0-9a-fA-F]{32}`
+
+If `X-REQUEST-ID` has invalid format it will be silently skipped and new ID will be generated.
