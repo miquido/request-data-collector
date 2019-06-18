@@ -60,7 +60,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Miquido\\RequestDataCollector\\RequestDataCollectorServiceProvider"
+                "Miquido\\RequestDataCollector\\Providers\\LaravelServiceProvider"
             ]
         }
     },

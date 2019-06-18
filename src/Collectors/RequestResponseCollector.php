@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Miquido\RequestDataCollector\Collectors\Contracts\ConfigurableInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\UsesResponseInterface;
+use Miquido\RequestDataCollector\RequestDataCollector;
 use Miquido\RequestDataCollector\Traits\ConfigurableTrait;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -275,6 +276,7 @@ class RequestResponseCollector implements DataCollectorInterface, ConfigurableIn
     {
         return [
             'laravel_started_at' => \defined('LARAVEL_START') ? LARAVEL_START : -1.0,
+            'rdc_started_at'     => RequestDataCollector::getStartedAt(),
             'collected_at'       => \microtime(true),
         ];
     }

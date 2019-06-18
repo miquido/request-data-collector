@@ -10,16 +10,34 @@ When using this package, every handled request (i.e. not excluded according to `
 [![Build](https://travis-ci.org/miquido/request-data-collector.svg?branch=master)](https://travis-ci.org/miquido/request-data-collector)
 
 ## Set up
-Firstly, if You are not using auto-discovery feature, register package's service provider in `config/app.php` file:
+
+### Laravel 5.6+
+If You are not using auto-discovery feature, register package's service provider in `config/app.php` file:
 
 ```php
 	'providers' => [
 		// ...
-		\Miquido\RequestDataCollector\RequestDataCollectorServiceProvider::class,
+		\Miquido\RequestDataCollector\Providers\LaravelServiceProvider::class,
 	],
 ```
 
-Then, add new environment variable (e.g. to `.env` file):
+### Lumen
+
+Register package's service provider in `bootstrap/app.php` file:
+
+```php
+$app->register(\Miquido\RequestDataCollector\Providers\LumenServiceProvider::class);
+``` 
+
+If You want to override default configuration, don't forget to copy the default one to `/config/request-data-collector.php` file and load it in `bootstrap/app.php` file:
+
+```php
+$app->configure('request-data-collector');
+```
+
+### Further configuration
+
+Add new environment variable (e.g. to `.env` file):
 
 ```ini
 REQUESTS_DATA_COLLECTOR_ENABLED=true
@@ -30,7 +48,7 @@ That's it! By default, only basic information about requests are collected and p
 ### Publishing default configuration
 
 ```bash
-php artisan vendor:publish --provider="Miquido\RequestDataCollector\RequestDataCollectorServiceProvider"
+php artisan vendor:publish --provider="Miquido\RequestDataCollector\Providers\LaravelServiceProvider"
 ```
 
 ## Available Data Collectors
