@@ -32,6 +32,11 @@ class RequestDataCollectorTest extends TestCase
     private $logManagerProphecy;
 
     /**
+     * @var \Illuminate\Http\Request&\Prophecy\Prophecy\ObjectProphecy
+     */
+    private $requestProphecy;
+
+    /**
      * @var \Illuminate\Contracts\Foundation\Application
      */
     private $applicationMock;
@@ -42,17 +47,29 @@ class RequestDataCollectorTest extends TestCase
     private $logManagerMock;
 
     /**
+     * @var \Illuminate\Http\Request
+     */
+    private $requestMock;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
         $this->applicationProphecy = $this->prophesize(Application::class);
         $this->logManagerProphecy = $this->prophesize(LogManager::class);
+        $this->requestProphecy = $this->prophesize(Request::class);
 
         $this->applicationMock = $this->applicationProphecy->reveal();
         $this->logManagerMock = $this->logManagerProphecy->reveal();
+        $this->requestMock = $this->requestProphecy->reveal();
     }
 
+    /**
+     * Provides a set of valid values for 'enabled' option.
+     *
+     * @return array
+     */
     public function validEnabledOptionDataProvider(): array
     {
         return [
@@ -73,10 +90,17 @@ class RequestDataCollectorTest extends TestCase
      */
     public function testCreateRequestDataCollectorWithWorkingState(bool $enabled): void
     {
-        $requestDataCollector = new RequestDataCollector($this->applicationMock, $this->logManagerMock, [
-            'enabled'    => $enabled,
-            'collectors' => [],
-        ]);
+        $this->assertRequestDoesNotContainXIdHeader();
+
+        $requestDataCollector = new RequestDataCollector(
+            $this->applicationMock,
+            $this->logManagerMock,
+            $this->requestMock,
+            [
+                'enabled'    => $enabled,
+                'collectors' => [],
+            ]
+        );
 
         self::assertSame($enabled, $requestDataCollector->isEnabled());
     }
@@ -124,32 +148,39 @@ class RequestDataCollectorTest extends TestCase
         $this->applicationProphecy->make($testCollector4Driver)
             ->shouldNotBeCalled();
 
-        $requestDataCollector = new RequestDataCollector($this->applicationMock, $this->logManagerMock, [
-            'collectors' => [
-                'test-collector-1' => true,
-                'test-collector-2' => true,
-                'test-collector-3' => true,
-                'test-collector-4' => false,
-            ],
+        $this->assertRequestDoesNotContainXIdHeader();
 
-            'options' => [
-                'test-collector-1' => [
-                    'driver' => $testCollector1Driver,
+        $requestDataCollector = new RequestDataCollector(
+            $this->applicationMock,
+            $this->logManagerMock,
+            $this->requestMock,
+            [
+                'collectors' => [
+                    'test-collector-1' => true,
+                    'test-collector-2' => true,
+                    'test-collector-3' => true,
+                    'test-collector-4' => false,
                 ],
 
-                'test-collector-2' => [
-                    'driver' => $testCollector2Driver,
-                ],
+                'options' => [
+                    'test-collector-1' => [
+                        'driver' => $testCollector1Driver,
+                    ],
 
-                'test-collector-3' => [
-                    'driver' => $testCollector3Driver,
-                ],
+                    'test-collector-2' => [
+                        'driver' => $testCollector2Driver,
+                    ],
 
-                'test-collector-4' => [
-                    'driver' => $testCollector4Driver,
+                    'test-collector-3' => [
+                        'driver' => $testCollector3Driver,
+                    ],
+
+                    'test-collector-4' => [
+                        'driver' => $testCollector4Driver,
+                    ],
                 ],
-            ],
-        ]);
+            ]
+        );
 
         // "test-collector-1/2/3" exists because it is enabled
         self::assertTrue($requestDataCollector->hasCollector('test-collector-1'));
@@ -171,20 +202,27 @@ class RequestDataCollectorTest extends TestCase
         $filter2Class = '\\Test\\Filter\\2';
         $filter2Options = [4, 5, 6];
 
-        $requestDataCollector = new RequestDataCollector($this->applicationMock, $this->logManagerMock, [
-            'collectors' => [],
+        $this->assertRequestDoesNotContainXIdHeader();
 
-            'exclude' => [
-                [
-                    'filter' => $filter1Class,
-                    'with'   => $filter1Options,
+        $requestDataCollector = new RequestDataCollector(
+            $this->applicationMock,
+            $this->logManagerMock,
+            $this->requestMock,
+            [
+                'collectors' => [],
+
+                'exclude' => [
+                    [
+                        'filter' => $filter1Class,
+                        'with'   => $filter1Options,
+                    ],
+                    [
+                        'filter' => $filter2Class,
+                        'with'   => $filter2Options,
+                    ],
                 ],
-                [
-                    'filter' => $filter2Class,
-                    'with'   => $filter2Options,
-                ],
-            ],
-        ]);
+            ]
+        );
 
         /**
          * @var \Miquido\RequestDataCollector\Filters\Contracts\FilterInterface&\Prophecy\Prophecy\ObjectProphecy $filter1Prophecy
@@ -264,24 +302,31 @@ class RequestDataCollectorTest extends TestCase
             ->shouldBeCalledOnce()
             ->willReturn($testCollector2Dummy);
 
-        $requestDataCollector = new RequestDataCollector($this->applicationMock, $this->logManagerMock, [
-            'channel' => 'some-channel-name',
+        $this->assertRequestDoesNotContainXIdHeader();
 
-            'collectors' => [
-                'test-collector-1' => true,
-                'test-collector-2' => true,
-            ],
+        $requestDataCollector = new RequestDataCollector(
+            $this->applicationMock,
+            $this->logManagerMock,
+            $this->requestMock,
+            [
+                'channel' => 'some-channel-name',
 
-            'options' => [
-                'test-collector-1' => [
-                    'driver' => $testCollector1Driver,
+                'collectors' => [
+                    'test-collector-1' => true,
+                    'test-collector-2' => true,
                 ],
 
-                'test-collector-2' => [
-                    'driver' => $testCollector2Driver,
+                'options' => [
+                    'test-collector-1' => [
+                        'driver' => $testCollector1Driver,
+                    ],
+
+                    'test-collector-2' => [
+                        'driver' => $testCollector2Driver,
+                    ],
                 ],
-            ],
-        ]);
+            ]
+        );
 
         /**
          * @var \Symfony\Component\HttpFoundation\Response $responseDummy
@@ -312,5 +357,74 @@ class RequestDataCollectorTest extends TestCase
             ->shouldBeCalledOnce();
 
         $requestDataCollector->collect($responseDummy);
+    }
+
+    public function testGetRequestIdFromHeader(): void
+    {
+        $xRequestId = 'X0123456789abcdef0123456789abcdef';
+
+        $this->requestProphecy->header('x-request-id', '')
+            ->shouldBeCalledOnce()
+            ->willReturn($xRequestId);
+
+        $requestDataCollector = new RequestDataCollector(
+            $this->applicationMock,
+            $this->logManagerMock,
+            $this->requestMock,
+            [
+                'enabled'    => true,
+                'collectors' => [],
+            ]
+        );
+
+        self::assertSame($xRequestId, $requestDataCollector->getRequestId());
+    }
+
+    public function testSetInvalidRequestId(): void
+    {
+        $this->assertRequestDoesNotContainXIdHeader();
+
+        $requestDataCollector = new RequestDataCollector(
+            $this->applicationMock,
+            $this->logManagerMock,
+            $this->requestMock,
+            [
+                'enabled'    => true,
+                'collectors' => [],
+            ]
+        );
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The Request ID has invalid format');
+
+        $requestDataCollector->setRequestId('invalid-request-id');
+    }
+
+    public function testSetValidRequestId(): void
+    {
+        $xRequestId = 'X0123456789abcdef0123456789abcdef';
+
+        $this->assertRequestDoesNotContainXIdHeader();
+
+        $requestDataCollector = new RequestDataCollector(
+            $this->applicationMock,
+            $this->logManagerMock,
+            $this->requestMock,
+            [
+                'enabled'    => true,
+                'collectors' => [],
+            ]
+        );
+
+        $requestDataCollector->setRequestId($xRequestId);
+
+        self::assertSame($xRequestId, $requestDataCollector->getRequestId());
+    }
+
+    private function assertRequestDoesNotContainXIdHeader(): void
+    {
+        $this->requestProphecy->header('x-request-id', '')
+            ->shouldBeCalledOnce()
+            ->willReturn('');
     }
 }

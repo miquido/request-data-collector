@@ -25,6 +25,11 @@ class RequestDataCollector
     private $logger;
 
     /**
+     * @var \Illuminate\Http\Request
+     */
+    private $request;
+
+    /**
      * @var string
      */
     private $requestId;
@@ -42,37 +47,23 @@ class RequestDataCollector
     /**
      * @param \Illuminate\Contracts\Foundation\Application $application
      * @param \Illuminate\Log\LogManager                   $logger
+     * @param \Illuminate\Http\Request                     $request
      * @param array                                        $config
-     *
-     * @throws \Exception
      */
-    public function __construct(Application $application, LogManager $logger, array $config)
+    public function __construct(Application $application, LogManager $logger, Request $request, array $config)
     {
         $this->application = $application;
         $this->logger = $logger;
+        $this->request = $request;
         $this->config = $config;
         $this->requestId = $this->generateRequestId();
 
-        foreach ($this->config['collectors'] as $collectorName => $enabled) {
-            if (!$enabled) {
-                continue;
-            }
-
-            $collectorInstance = $this->application->make($this->config['options'][$collectorName]['driver']);
-
-            if ($collectorInstance instanceof ConfigurableInterface) {
-                $collectorInstance->setConfig($this->config['options'][$collectorName]);
-            }
-
-            if ($collectorInstance instanceof ModifiesContainerInterface) {
-                $collectorInstance->register($this->application);
-            }
-
-            $this->collectors[$collectorName] = $collectorInstance;
-        }
+        $this->configureCollectors();
     }
 
     /**
+     * Returns given collector.
+     *
      * @param string $name
      *
      * @return \Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface
@@ -83,6 +74,8 @@ class RequestDataCollector
     }
 
     /**
+     * Checks if Request Data Collector has given collector enabled.
+     *
      * @param string $name
      *
      * @return bool
@@ -93,6 +86,8 @@ class RequestDataCollector
     }
 
     /**
+     * Collects all information about given request.
+     *
      * @param \Symfony\Component\HttpFoundation\Response $response
      */
     public function collect(Response $response): void
@@ -112,6 +107,8 @@ class RequestDataCollector
     }
 
     /**
+     * Returns current Request ID.
+     *
      * @return string
      */
     public function getRequestId(): string
@@ -120,6 +117,23 @@ class RequestDataCollector
     }
 
     /**
+     * Allows to set custom Request ID. Provided Request ID has to be in format:
+     * <code>X[0-9a-fA-F]{32}</code>.
+     *
+     * @param string $requestId
+     */
+    public function setRequestId(string $requestId): void
+    {
+        if (!$this->isValidRequestIdFormat($requestId)) {
+            throw new \InvalidArgumentException('The Request ID has invalid format');
+        }
+
+        $this->requestId = $requestId;
+    }
+
+    /**
+     * Returns whether Request Data Collector is enabled or not.
+     *
      * @return bool
      */
     public function isEnabled(): bool
@@ -128,6 +142,8 @@ class RequestDataCollector
     }
 
     /**
+     * Checks if Request is excluded from being collected.
+     *
      * @param \Illuminate\Http\Request $request
      *
      * @return bool
@@ -149,18 +165,59 @@ class RequestDataCollector
     }
 
     /**
-     * @throws \Exception
+     * Generates new Request ID or uses one provided in request's headers.
      *
      * @return string
-     *
-     * @codeCoverageIgnore
      */
     private function generateRequestId(): string
     {
-        if (\function_exists('random_bytes')) {
-            return 'X' . \bin2hex(\random_bytes(16));
+        if ($this->isValidRequestIdFormat($xRequestId = $this->request->header('x-request-id', ''))) {
+            return $xRequestId;
+        }
+
+        // @codeCoverageIgnoreStart
+        try {
+            if (\function_exists('random_bytes')) {
+                return 'X' . \bin2hex(\random_bytes(16));
+            }
+        } catch (\Exception $e) {
+            // random_bytes: If it was not possible to gather sufficient entropy
         }
 
         return 'X' . \md5(\uniqid('', true));
+        // @codeCoverageIgnoreEnd
+    }
+
+    private function configureCollectors(): void
+    {
+        foreach ($this->config['collectors'] as $collectorName => $enabled) {
+            if (!$enabled) {
+                continue;
+            }
+
+            $collectorInstance = $this->application->make($this->config['options'][$collectorName]['driver']);
+
+            if ($collectorInstance instanceof ConfigurableInterface) {
+                $collectorInstance->setConfig($this->config['options'][$collectorName]);
+            }
+
+            if ($collectorInstance instanceof ModifiesContainerInterface) {
+                $collectorInstance->register($this->application);
+            }
+
+            $this->collectors[$collectorName] = $collectorInstance;
+        }
+    }
+
+    /**
+     * Checks if given Request ID has valid format.
+     *
+     * @param string $requestId
+     *
+     * @return bool
+     */
+    private function isValidRequestIdFormat(string $requestId): bool
+    {
+        return 1 === \preg_match('/^X[[:xdigit:]]{32}$/', $requestId);
     }
 }
