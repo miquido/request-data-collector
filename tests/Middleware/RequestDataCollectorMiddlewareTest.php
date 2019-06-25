@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Tests\Middleware;
 
 use Exception;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Miquido\RequestDataCollector\Middleware\RequestDataCollectorMiddleware;
@@ -20,9 +20,9 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 class RequestDataCollectorMiddlewareTest extends TestCase
 {
     /**
-     * @var \Illuminate\Contracts\Foundation\Application&\Prophecy\Prophecy\ObjectProphecy
+     * @var \Illuminate\Contracts\Container\Container&\Prophecy\Prophecy\ObjectProphecy
      */
-    private $applicationProphecy;
+    private $containerProphecy;
 
     /**
      * @var \Miquido\RequestDataCollector\RequestDataCollector&\Prophecy\Prophecy\ObjectProphecy
@@ -49,19 +49,19 @@ class RequestDataCollectorMiddlewareTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->applicationProphecy = $this->prophesize(Application::class);
+        $this->containerProphecy = $this->prophesize(Container::class);
         $this->requestDataCollectorProphecy = $this->prophesize(RequestDataCollector::class);
         $this->requestDummy = $this->prophesize(Request::class)->reveal();
         $this->responseDummy = $this->prophesize(Response::class)->reveal();
 
         /**
-         * @var \Illuminate\Contracts\Foundation\Application       $applicationMock
+         * @var \Illuminate\Contracts\Container\Container          $containerMock
          * @var \Miquido\RequestDataCollector\RequestDataCollector $requestDataCollectorMock
          */
-        $applicationMock = $this->applicationProphecy->reveal();
+        $containerMock = $this->containerProphecy->reveal();
         $requestDataCollectorMock = $this->requestDataCollectorProphecy->reveal();
 
-        $this->requestDataCollectorMiddleware = new RequestDataCollectorMiddleware($applicationMock, $requestDataCollectorMock);
+        $this->requestDataCollectorMiddleware = new RequestDataCollectorMiddleware($containerMock, $requestDataCollectorMock);
     }
 
     public function testHandleWhenRequestDataCollectorIsDisabled(): void
@@ -141,7 +141,7 @@ class RequestDataCollectorMiddlewareTest extends TestCase
          */
         $exceptionHandlerProphecy = $this->prophesize(ExceptionHandler::class);
 
-        $this->applicationProphecy->get(ExceptionHandler::class)
+        $this->containerProphecy->get(ExceptionHandler::class)
             ->shouldBeCalledOnce()
             ->willReturn($exceptionHandlerProphecy->reveal());
 

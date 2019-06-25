@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Miquido\RequestDataCollector;
 
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\Request;
 use Illuminate\Log\LogManager;
 use Miquido\RequestDataCollector\Collectors\Contracts\ConfigurableInterface;
@@ -15,9 +15,14 @@ use Symfony\Component\HttpFoundation\Response;
 class RequestDataCollector
 {
     /**
-     * @var \Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface[]
+     * @var float
      */
-    private $collectors = [];
+    private static $startedAt = -1.0;
+
+    /**
+     * @var \Illuminate\Contracts\Container\Container
+     */
+    private $container;
 
     /**
      * @var \Illuminate\Log\LogManager
@@ -30,35 +35,50 @@ class RequestDataCollector
     private $request;
 
     /**
-     * @var string
-     */
-    private $requestId;
-
-    /**
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    private $application;
-
-    /**
      * @var array
      */
     private $config;
 
     /**
-     * @param \Illuminate\Contracts\Foundation\Application $application
-     * @param \Illuminate\Log\LogManager                   $logger
-     * @param \Illuminate\Http\Request                     $request
-     * @param array                                        $config
+     * @var string
      */
-    public function __construct(Application $application, LogManager $logger, Request $request, array $config)
+    private $requestId;
+
+    /**
+     * @var \Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface[]
+     */
+    private $collectors = [];
+
+    /**
+     * @param \Illuminate\Contracts\Container\Container $container
+     * @param \Illuminate\Log\LogManager                $logger
+     * @param \Illuminate\Http\Request                  $request
+     * @param array                                     $config
+     */
+    public function __construct(Container $container, LogManager $logger, Request $request, array $config)
     {
-        $this->application = $application;
+        if (self::$startedAt < 0.0) {
+            self::$startedAt = \microtime(true);
+        }
+
+        $this->container = $container;
         $this->logger = $logger;
         $this->request = $request;
         $this->config = $config;
         $this->requestId = $this->generateRequestId();
 
         $this->configureCollectors();
+    }
+
+    /**
+     * Returns timestamp when Request Data Collector was initialized.
+     * The value of -1.0 means Request Data Collector has never been initialized.
+     *
+     * @return float
+     */
+    public static function getStartedAt(): float
+    {
+        return self::$startedAt;
     }
 
     /**
@@ -154,7 +174,7 @@ class RequestDataCollector
             /**
              * @var \Miquido\RequestDataCollector\Filters\Contracts\FilterInterface $filterInstance
              */
-            $filterInstance = $this->application->make($filter, $options);
+            $filterInstance = $this->container->make($filter, $options);
 
             if ($filterInstance->accept($request)) {
                 return true;
@@ -195,14 +215,14 @@ class RequestDataCollector
                 continue;
             }
 
-            $collectorInstance = $this->application->make($this->config['options'][$collectorName]['driver']);
+            $collectorInstance = $this->container->make($this->config['options'][$collectorName]['driver']);
 
             if ($collectorInstance instanceof ConfigurableInterface) {
                 $collectorInstance->setConfig($this->config['options'][$collectorName]);
             }
 
             if ($collectorInstance instanceof ModifiesContainerInterface) {
-                $collectorInstance->register($this->application);
+                $collectorInstance->register($this->container);
             }
 
             $this->collectors[$collectorName] = $collectorInstance;

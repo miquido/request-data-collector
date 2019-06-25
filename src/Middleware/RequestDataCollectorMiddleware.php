@@ -3,15 +3,14 @@ declare(strict_types=1);
 
 namespace Miquido\RequestDataCollector\Middleware;
 
-use Closure;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Contracts\Foundation\Application;
 use Miquido\RequestDataCollector\RequestDataCollector;
 
 class RequestDataCollectorMiddleware
 {
     /**
-     * @var \Illuminate\Contracts\Foundation\Application
+     * @var \Illuminate\Contracts\Container\Container
      */
     private $application;
 
@@ -21,10 +20,10 @@ class RequestDataCollectorMiddleware
     private $requestDataCollector;
 
     /**
-     * @param \Illuminate\Contracts\Foundation\Application       $application
+     * @param \Illuminate\Contracts\Container\Container          $application
      * @param \Miquido\RequestDataCollector\RequestDataCollector $requestDataCollector
      */
-    public function __construct(Application $application, RequestDataCollector $requestDataCollector)
+    public function __construct(Container $application, RequestDataCollector $requestDataCollector)
     {
         $this->application = $application;
         $this->requestDataCollector = $requestDataCollector;
@@ -34,13 +33,13 @@ class RequestDataCollectorMiddleware
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
+     * @param callable                 $next
      *
      * @throws \Exception
      *
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle($request, callable $next)
     {
         if (!$this->requestDataCollector->isEnabled() || $this->requestDataCollector->isRequestExcluded($request)) {
             return $next($request);
@@ -49,7 +48,9 @@ class RequestDataCollectorMiddleware
         try {
             $response = $next($request);
         } catch (\Throwable $throwable) {
-            /** @var \Illuminate\Contracts\Debug\ExceptionHandler $handler */
+            /**
+             * @var \Illuminate\Contracts\Debug\ExceptionHandler $handler
+             */
             $handler = $this->application->get(ExceptionHandler::class);
 
             $handler->report($throwable);
