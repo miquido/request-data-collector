@@ -14,6 +14,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Tracking
+    |--------------------------------------------------------------------------
+    |
+    | Enable or disable request tracking. When enabled, before a Request ID is
+    | generated, it is first checked if request has X-REQUEST-ID header and if
+    | so, and value is valid Request ID format, then it is used instead of the
+    | generated one.
+    |
+    */
+    'tracking' => env('REQUESTS_DATA_COLLECTOR_ALLOW_TRACKING', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Exclude request
     |--------------------------------------------------------------------------
     |

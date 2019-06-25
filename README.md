@@ -191,3 +191,9 @@ In both cases `Request ID` has to be in following format:
 `X[0-9a-fA-F]{32}`
 
 If `X-REQUEST-ID` has invalid format it will be silently skipped and new ID will be generated.
+
+By default, tracking is enabled. However, it can be disabled:
+
+```ini
+REQUESTS_DATA_COLLECTOR_ALLOW_TRACKING=false
+```
