@@ -13,6 +13,7 @@ use Miquido\RequestDataCollector\Collectors\Contracts\UsesResponseInterface;
 use Miquido\RequestDataCollector\Filters\Contracts\FilterInterface;
 use Miquido\RequestDataCollector\RequestDataCollector;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -90,7 +91,7 @@ class RequestDataCollectorTest extends TestCase
      */
     public function testCreateRequestDataCollectorWithWorkingState(bool $enabled): void
     {
-        $this->assertRequestDoesNotContainXIdHeader();
+        $this->assertXRequestIdHeaderIsNotChecked();
 
         $requestDataCollector = new RequestDataCollector(
             $this->applicationMock,
@@ -148,7 +149,7 @@ class RequestDataCollectorTest extends TestCase
         $this->applicationProphecy->make($testCollector4Driver)
             ->shouldNotBeCalled();
 
-        $this->assertRequestDoesNotContainXIdHeader();
+        $this->assertXRequestIdHeaderIsNotChecked();
 
         $requestDataCollector = new RequestDataCollector(
             $this->applicationMock,
@@ -202,7 +203,7 @@ class RequestDataCollectorTest extends TestCase
         $filter2Class = '\\Test\\Filter\\2';
         $filter2Options = [4, 5, 6];
 
-        $this->assertRequestDoesNotContainXIdHeader();
+        $this->assertXRequestIdHeaderIsNotChecked();
 
         $requestDataCollector = new RequestDataCollector(
             $this->applicationMock,
@@ -302,7 +303,7 @@ class RequestDataCollectorTest extends TestCase
             ->shouldBeCalledOnce()
             ->willReturn($testCollector2Dummy);
 
-        $this->assertRequestDoesNotContainXIdHeader();
+        $this->assertXRequestIdHeaderIsNotChecked();
 
         $requestDataCollector = new RequestDataCollector(
             $this->applicationMock,
@@ -359,7 +360,7 @@ class RequestDataCollectorTest extends TestCase
         $requestDataCollector->collect($responseDummy);
     }
 
-    public function testGetRequestIdFromHeader(): void
+    public function testGetRequestIdFromHeaderWhenTrackingIsEnabled(): void
     {
         $xRequestId = 'X0123456789abcdef0123456789abcdef';
 
@@ -373,6 +374,7 @@ class RequestDataCollectorTest extends TestCase
             $this->requestMock,
             [
                 'enabled'    => true,
+                'tracking'   => true,
                 'collectors' => [],
             ]
         );
@@ -380,9 +382,32 @@ class RequestDataCollectorTest extends TestCase
         self::assertSame($xRequestId, $requestDataCollector->getRequestId());
     }
 
+    public function testDoNotGetRequestIdFromHeaderWhenTrackingIsDisabled(): void
+    {
+        $xRequestId = 'X0123456789abcdef0123456789abcdef';
+
+        $this->requestProphecy->header('x-request-id', '')
+            ->willReturn($xRequestId);
+
+        $this->assertXRequestIdHeaderIsNotChecked();
+
+        $requestDataCollector = new RequestDataCollector(
+            $this->applicationMock,
+            $this->logManagerMock,
+            $this->requestMock,
+            [
+                'enabled'    => true,
+                'tracking'   => false,
+                'collectors' => [],
+            ]
+        );
+
+        self::assertNotEquals($xRequestId, $requestDataCollector->getRequestId());
+    }
+
     public function testSetInvalidRequestId(): void
     {
-        $this->assertRequestDoesNotContainXIdHeader();
+        $this->assertXRequestIdHeaderIsNotChecked();
 
         $requestDataCollector = new RequestDataCollector(
             $this->applicationMock,
@@ -404,7 +429,7 @@ class RequestDataCollectorTest extends TestCase
     {
         $xRequestId = 'X0123456789abcdef0123456789abcdef';
 
-        $this->assertRequestDoesNotContainXIdHeader();
+        $this->assertXRequestIdHeaderIsNotChecked();
 
         $requestDataCollector = new RequestDataCollector(
             $this->applicationMock,
@@ -421,10 +446,9 @@ class RequestDataCollectorTest extends TestCase
         self::assertSame($xRequestId, $requestDataCollector->getRequestId());
     }
 
-    private function assertRequestDoesNotContainXIdHeader(): void
+    private function assertXRequestIdHeaderIsNotChecked(): void
     {
-        $this->requestProphecy->header('x-request-id', '')
-            ->shouldBeCalledOnce()
-            ->willReturn('');
+        $this->requestProphecy->header('x-request-id', Argument::any())
+            ->shouldNotBeCalled();
     }
 }

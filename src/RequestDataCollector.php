@@ -171,7 +171,7 @@ class RequestDataCollector
      */
     private function generateRequestId(): string
     {
-        if ($this->isValidRequestIdFormat($xRequestId = $this->request->header('x-request-id', ''))) {
+        if (($this->config['tracking'] ?? false) && $this->isValidRequestIdFormat($xRequestId = $this->request->header('x-request-id', ''))) {
             return $xRequestId;
         }
 
