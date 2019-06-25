@@ -88,7 +88,7 @@ class RequestDataCollectorTest extends TestCase
     {
         self::assertSame(-1.0, RequestDataCollector::getStartedAt());
 
-        $this->assertRequestDoesNotContainXIdHeader();
+        $this->assertXRequestIdHeaderIsNotChecked();
 
         $startedAt = \microtime(true);
 
@@ -413,7 +413,7 @@ class RequestDataCollectorTest extends TestCase
         $this->assertXRequestIdHeaderIsNotChecked();
 
         $requestDataCollector = new RequestDataCollector(
-            $this->applicationMock,
+            $this->containerMock,
             $this->logManagerMock,
             $this->requestMock,
             [
