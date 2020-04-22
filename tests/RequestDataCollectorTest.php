@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests;
+namespace Miquido\RequestDataCollector\Tests;
 
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\Request;

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\Middleware;
+namespace Miquido\RequestDataCollector\Tests\Middleware;
 
 use Exception;
 use Illuminate\Contracts\Container\Container;
