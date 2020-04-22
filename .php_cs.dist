@@ -226,7 +226,7 @@ class WhitespaceAroundReferenceFixer implements \PhpCsFixer\Fixer\FixerInterface
      * @param \PhpCsFixer\Tokenizer\Tokens $tokens
      * @param int                          $position
      */
-    private function performAction(string $action, string $scope, \PhpCsFixer\Tokenizer\Tokens $tokens, int &$position)
+    private function performAction(string $action, string $scope, \PhpCsFixer\Tokenizer\Tokens $tokens, int &$position): void
     {
         $modifier = (self::SCOPE_AFTER === $scope) ? +1 : -1;
 
@@ -491,7 +491,7 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
      */
     private function handleParam(string $content): string
     {
-        if ('$' === $content{0} && preg_match('/(\$\S+\s+)(.+)/', $content, $match)) {
+        if ('$' === $content[0] && preg_match('/(\$\S+\s+)(.+)/', $content, $match)) {
             [
                 1 => $variable,
                 2 => $typeHints,
@@ -675,7 +675,7 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
         $typeHintsArray = preg_split('/(\s*\|\s*)/', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
 
         foreach ($typeHintsArray as $index => $typeHint) {
-            if (0 === ($index % 2) && '\\' !== $typeHint{0} && preg_match('/(.+?)([\[\]\s]+)?$/im', $typeHint, $match) && !$this->isBasicType($match[1])) {
+            if (0 === ($index % 2) && '\\' !== $typeHint[0] && preg_match('/(.+?)([\[\]\s]+)?$/im', $typeHint, $match) && !$this->isBasicType($match[1])) {
                 $typeHintsArray[$index] = sprintf('%s%s', $this->getImportFQN($match[1]), $match[2] ?? '');
             }
         }
@@ -685,7 +685,7 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
 }
 
 // https://mlocati.github.io/php-cs-fixer-configurator/
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setIndent('    ')
     ->setLineEnding("\n")
     ->setRiskyAllowed(true)
@@ -952,7 +952,7 @@ return PhpCsFixer\Config::create()
                 'const',
             ],
         ],
-        
+
         'void_return' => true,
 
         'whitespace_after_comma_in_array' => true,
