@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\Collectors;
+namespace Miquido\RequestDataCollector\Tests\Collectors;
 
 use Illuminate\Database\Connection;
 use Illuminate\Database\DatabaseManager;

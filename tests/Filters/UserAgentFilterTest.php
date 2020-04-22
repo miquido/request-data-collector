@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\Filters;
+namespace Miquido\RequestDataCollector\Tests\Filters;
 
 use Illuminate\Http\Request;
 use Miquido\RequestDataCollector\Filters\UserAgentFilter;
