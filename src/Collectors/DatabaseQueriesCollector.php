@@ -7,9 +7,10 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Events\QueryExecuted;
 use Miquido\RequestDataCollector\Collectors\Contracts\ConfigurableInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface;
+use Miquido\RequestDataCollector\Collectors\Contracts\ThinkOfBetterNameInterface;
 use Miquido\RequestDataCollector\Traits\ConfigurableTrait;
 
-class DatabaseQueriesCollector implements DataCollectorInterface, ConfigurableInterface
+class DatabaseQueriesCollector implements DataCollectorInterface, ConfigurableInterface, ThinkOfBetterNameInterface
 {
     use ConfigurableTrait {
         ConfigurableTrait::setConfig as setConfigTrait;
@@ -73,6 +74,22 @@ class DatabaseQueriesCollector implements DataCollectorInterface, ConfigurableIn
         }
 
         return $this->queryLog;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getThinkOfBetterName(array $collected): iterable
+    {
+        foreach ($collected as $connectionName => $statistics) {
+            foreach ($statistics['queries'] as $index => $query) {
+                yield sprintf('%s.query.%d', $connectionName, $index) => $query;
+            }
+
+            yield sprintf('%s.queries_count', $connectionName) => $statistics['queries_count'];
+            yield sprintf('%s.distinct_queries_count', $connectionName) => $statistics['distinct_queries_count'];
+            yield sprintf('%s.distinct_queries_ratio', $connectionName) => $statistics['distinct_queries_ratio'];
+        }
     }
 
     private function getConnectionName(?string $name): string

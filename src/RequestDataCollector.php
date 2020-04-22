@@ -9,11 +9,16 @@ use Illuminate\Log\LogManager;
 use Miquido\RequestDataCollector\Collectors\Contracts\ConfigurableInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\ModifiesContainerInterface;
+use Miquido\RequestDataCollector\Collectors\Contracts\ThinkOfBetterNameInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\UsesResponseInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class RequestDataCollector
 {
+    public const LOGGING_FORMAT_SINGLE = 'single';
+
+    public const LOGGING_FORMAT_SEPARATE = 'separate';
+
     /**
      * @var float
      */
@@ -104,7 +109,25 @@ class RequestDataCollector
                 $collector->setResponse($response);
             }
 
-            $channel->debug(\sprintf('request-data-collector.%s.%s', $collectorName, $this->requestId), $collector->collect());
+            $collected = $collector->collect();
+
+            if (
+                !empty($collected) &&
+                $collector instanceof ThinkOfBetterNameInterface &&
+                (
+                    self::LOGGING_FORMAT_SEPARATE === ($this->config['logging_format'] ?? self::LOGGING_FORMAT_SINGLE) ||
+                    (
+                        $collector instanceof ConfigurableInterface &&
+                        self::LOGGING_FORMAT_SEPARATE === $collector->getConfig('logging_format', self::LOGGING_FORMAT_SINGLE)
+                    )
+                )
+            ) {
+                foreach ($collector->getThinkOfBetterName($collected) as $index => $entry) {
+                    $channel->debug(\sprintf('request-data-collector.%s.%s.%s', $collectorName, $index, $this->requestId), $entry);
+                }
+            } else {
+                $channel->debug(\sprintf('request-data-collector.%s.%s', $collectorName, $this->requestId), $collected);
+            }
         }
     }
 
