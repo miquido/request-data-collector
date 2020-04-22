@@ -32,6 +32,7 @@ env:
     - DEFAULT_COMPOSER_FLAGS="--no-interaction --no-ansi --no-progress --no-suggest --no-scripts --optimize-autoloader --classmap-authoritative"
 
 install:
+  - composer global require "hirak/prestissimo:^0.3" --prefer-dist --no-progress --no-suggest --classmap-authoritative --ansi
   - if [[ "$DEPENDENCIES" = 'lowest' ]]; then export DEFAULT_COMPOSER_FLAGS="$DEFAULT_COMPOSER_FLAGS --prefer-lowest"; fi
   - composer require illuminate/contracts:${LARAVEL} illuminate/database:${LARAVEL} illuminate/log:${LARAVEL} illuminate/routing:${LARAVEL} illuminate/support:${LARAVEL} $DEFAULT_COMPOSER_FLAGS
 
