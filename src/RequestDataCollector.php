@@ -49,12 +49,6 @@ class RequestDataCollector
      */
     private $collectors = [];
 
-    /**
-     * @param \Illuminate\Contracts\Container\Container $container
-     * @param \Illuminate\Log\LogManager                $logger
-     * @param \Illuminate\Http\Request                  $request
-     * @param array                                     $config
-     */
     public function __construct(Container $container, LogManager $logger, Request $request, array $config)
     {
         if (self::$startedAt < 0.0) {
@@ -73,8 +67,6 @@ class RequestDataCollector
     /**
      * Returns timestamp when Request Data Collector was initialized.
      * The value of -1.0 means Request Data Collector has never been initialized.
-     *
-     * @return float
      */
     public static function getStartedAt(): float
     {
@@ -83,10 +75,6 @@ class RequestDataCollector
 
     /**
      * Returns given collector.
-     *
-     * @param string $name
-     *
-     * @return \Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface
      */
     public function getCollector(string $name): DataCollectorInterface
     {
@@ -95,10 +83,6 @@ class RequestDataCollector
 
     /**
      * Checks if Request Data Collector has given collector enabled.
-     *
-     * @param string $name
-     *
-     * @return bool
      */
     public function hasCollector(string $name): bool
     {
@@ -107,8 +91,6 @@ class RequestDataCollector
 
     /**
      * Collects all information about given request.
-     *
-     * @param \Symfony\Component\HttpFoundation\Response $response
      */
     public function collect(Response $response): void
     {
@@ -128,8 +110,6 @@ class RequestDataCollector
 
     /**
      * Returns current Request ID.
-     *
-     * @return string
      */
     public function getRequestId(): string
     {
@@ -139,8 +119,6 @@ class RequestDataCollector
     /**
      * Allows to set custom Request ID. Provided Request ID has to be in format:
      * <code>X[0-9a-fA-F]{32}</code>.
-     *
-     * @param string $requestId
      */
     public function setRequestId(string $requestId): void
     {
@@ -153,8 +131,6 @@ class RequestDataCollector
 
     /**
      * Returns whether Request Data Collector is enabled or not.
-     *
-     * @return bool
      */
     public function isEnabled(): bool
     {
@@ -163,10 +139,6 @@ class RequestDataCollector
 
     /**
      * Checks if Request is excluded from being collected.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return bool
      */
     public function isRequestExcluded(Request $request): bool
     {
@@ -186,8 +158,6 @@ class RequestDataCollector
 
     /**
      * Generates new Request ID or uses one provided in request's headers.
-     *
-     * @return string
      */
     private function generateRequestId(): string
     {
@@ -231,10 +201,6 @@ class RequestDataCollector
 
     /**
      * Checks if given Request ID has valid format.
-     *
-     * @param string $requestId
-     *
-     * @return bool
      */
     private function isValidRequestIdFormat(string $requestId): bool
     {

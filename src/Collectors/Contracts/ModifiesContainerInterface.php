@@ -7,8 +7,5 @@ use Illuminate\Contracts\Container\Container;
 
 interface ModifiesContainerInterface
 {
-    /**
-     * @param \Illuminate\Contracts\Container\Container $container
-     */
     public function register(Container $container): void;
 }

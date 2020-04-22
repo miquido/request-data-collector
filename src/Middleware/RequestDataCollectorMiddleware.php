@@ -19,10 +19,6 @@ class RequestDataCollectorMiddleware
      */
     private $requestDataCollector;
 
-    /**
-     * @param \Illuminate\Contracts\Container\Container          $application
-     * @param \Miquido\RequestDataCollector\RequestDataCollector $requestDataCollector
-     */
     public function __construct(Container $application, RequestDataCollector $requestDataCollector)
     {
         $this->application = $application;
@@ -33,7 +29,6 @@ class RequestDataCollectorMiddleware
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param callable                 $next
      *
      * @throws \Exception
      *

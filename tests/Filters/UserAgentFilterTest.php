@@ -23,9 +23,6 @@ class UserAgentFilterTest extends TestCase
      */
     private $userAgentFilter;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp(): void
     {
         $this->userAgentFilter = new UserAgentFilter(self::USER_AGENTS);
@@ -33,8 +30,6 @@ class UserAgentFilterTest extends TestCase
 
     /**
      * Provider a set of valid User Agents.
-     *
-     * @return iterable
      */
     public function validUserAgentDataProvider(): iterable
     {
@@ -55,8 +50,6 @@ class UserAgentFilterTest extends TestCase
 
     /**
      * Provider a set of invalid User Agents.
-     *
-     * @return iterable
      */
     public function invalidUserAgentDataProvider(): iterable
     {
@@ -77,8 +70,6 @@ class UserAgentFilterTest extends TestCase
 
     /**
      * @dataProvider validUserAgentDataProvider
-     *
-     * @param string $userAgent
      */
     public function testAcceptPassed(string $userAgent): void
     {
@@ -87,19 +78,12 @@ class UserAgentFilterTest extends TestCase
 
     /**
      * @dataProvider invalidUserAgentDataProvider
-     *
-     * @param string $userAgent
      */
     public function testAcceptRejected(string $userAgent): void
     {
         self::assertFalse($this->userAgentFilter->accept($this->assertGotRequest($userAgent)));
     }
 
-    /**
-     * @param string $userAgent
-     *
-     * @return \Illuminate\Http\Request
-     */
     private function assertGotRequest(string $userAgent): Request
     {
         /**

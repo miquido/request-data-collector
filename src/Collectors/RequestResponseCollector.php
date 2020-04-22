@@ -73,17 +73,11 @@ class RequestResponseCollector implements DataCollectorInterface, ConfigurableIn
      */
     private $response;
 
-    /**
-     * @param \Illuminate\Http\Request $request
-     */
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function setConfig(array $config): void
     {
         $this->setConfigTrait($config);
@@ -93,17 +87,11 @@ class RequestResponseCollector implements DataCollectorInterface, ConfigurableIn
         }
     }
 
-    /**
-     * @inheritdoc
-     */
     public function setResponse(Response $response): void
     {
         $this->response = $response;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function collect(): array
     {
         return [
@@ -115,7 +103,7 @@ class RequestResponseCollector implements DataCollectorInterface, ConfigurableIn
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     private function collectRequest(): array
     {
@@ -194,7 +182,7 @@ class RequestResponseCollector implements DataCollectorInterface, ConfigurableIn
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     private function collectResponse(): array
     {
@@ -232,7 +220,7 @@ class RequestResponseCollector implements DataCollectorInterface, ConfigurableIn
     }
 
     /**
-     * @return array
+     * @return array<string, array<string, mixed>>
      */
     private function collectVariables(): array
     {
@@ -270,7 +258,7 @@ class RequestResponseCollector implements DataCollectorInterface, ConfigurableIn
     }
 
     /**
-     * @return array
+     * @return array<string, float>
      */
     private function collectTimes(): array
     {
@@ -281,52 +269,26 @@ class RequestResponseCollector implements DataCollectorInterface, ConfigurableIn
         ];
     }
 
-    /**
-     * @param string $infoName
-     *
-     * @return bool
-     */
     private function shouldCollectRequestInfo(string $infoName): bool
     {
         return \in_array($infoName, $this->config['request_info'] ?? [], true);
     }
 
-    /**
-     * @param string $infoName
-     *
-     * @return bool
-     */
     private function shouldCollectResponseInfo(string $infoName): bool
     {
         return \in_array($infoName, $this->config['response_info'] ?? [], true);
     }
 
-    /**
-     * @param string $variableName
-     *
-     * @return bool
-     */
     private function shouldCollectVariable(string $variableName): bool
     {
         return isset($this->config['variables'][$variableName]) || \in_array($variableName, $this->config['variables'] ?? [], true);
     }
 
-    /**
-     * @param string $variableName
-     *
-     * @return array
-     */
     private function getVariableConfig(string $variableName): array
     {
         return $this->config['variables'][$variableName] ?? [];
     }
 
-    /**
-     * @param string $key
-     * @param array  $fullDataArray
-     *
-     * @return array
-     */
     private function applyExcludeAndIncludeLogic(string $key, array $fullDataArray): array
     {
         $config = $this->getVariableConfig($key);

@@ -7,10 +7,5 @@ use Illuminate\Http\Request;
 
 interface FilterInterface
 {
-    /**
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return bool
-     */
     public function accept(Request $request): bool;
 }

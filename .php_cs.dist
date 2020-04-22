@@ -22,9 +22,6 @@ class NoWhitespacesAroundAccessModifiersFixer implements \PhpCsFixer\Fixer\Fixer
     ];
 
 
-    /**
-     * @inheritdoc
-     */
     public function fix(\SplFileInfo $file, \PhpCsFixer\Tokenizer\Tokens $tokens): void
     {
         for ($i = 0, $total = \count($tokens) - 1; $i < $total; ++$i) {
@@ -43,18 +40,12 @@ class NoWhitespacesAroundAccessModifiersFixer implements \PhpCsFixer\Fixer\Fixer
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function isCandidate(\PhpCsFixer\Tokenizer\Tokens $tokens): bool
     {
         return $tokens->isAnyTokenKindsFound(self::POSSIBLE_KIND);
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function getPriority(): int
     {
         // Must run after VisibilityRequiredFixer
@@ -62,27 +53,18 @@ class NoWhitespacesAroundAccessModifiersFixer implements \PhpCsFixer\Fixer\Fixer
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function getName(): string
     {
         return 'Custom/no_whitespaces_around_access_modifiers';
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function isRisky(): bool
     {
         return false;
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function supports(\SplFileInfo $file): bool
     {
         return true;
@@ -123,14 +105,14 @@ class WhitespaceAroundReferenceFixer implements \PhpCsFixer\Fixer\FixerInterface
      */
     public function __construct(array $configuration = [])
     {
-        if (array_key_exists(self::SCOPE_AFTER, $configuration)) {
+        if (\array_key_exists(self::SCOPE_AFTER, $configuration)) {
             if (!\in_array($configuration[self::SCOPE_AFTER], [
                 self::ACTION_NONE,
                 self::ACTION_ONE,
                 self::ACTION_AT_LEAST_ONE,
                 self::ACTION_KEEP,
             ], true)) {
-                throw new DomainException(sprintf('Unknown value "%s" for the "after" option', $configuration[self::SCOPE_AFTER]));
+                throw new DomainException(\sprintf('Unknown value "%s" for the "after" option', $configuration[self::SCOPE_AFTER]));
             }
 
             $this->after = $configuration[self::SCOPE_AFTER];
@@ -138,14 +120,14 @@ class WhitespaceAroundReferenceFixer implements \PhpCsFixer\Fixer\FixerInterface
             unset($configuration[self::SCOPE_AFTER]);
         }
 
-        if (array_key_exists(self::SCOPE_BEFORE, $configuration)) {
+        if (\array_key_exists(self::SCOPE_BEFORE, $configuration)) {
             if (!\in_array($configuration[self::SCOPE_BEFORE], [
                 self::ACTION_NONE,
                 self::ACTION_ONE,
                 self::ACTION_AT_LEAST_ONE,
                 self::ACTION_KEEP,
             ], true)) {
-                throw new DomainException(sprintf('Unknown value "%s" for the "before" option', $configuration[self::SCOPE_BEFORE]));
+                throw new DomainException(\sprintf('Unknown value "%s" for the "before" option', $configuration[self::SCOPE_BEFORE]));
             }
 
             $this->before = $configuration[self::SCOPE_BEFORE];
@@ -154,14 +136,11 @@ class WhitespaceAroundReferenceFixer implements \PhpCsFixer\Fixer\FixerInterface
         }
 
         if (!empty($configuration)) {
-            throw new DomainException(sprintf('Unknown actions: %s', implode(', ', array_keys($configuration))));
+            throw new DomainException(\sprintf('Unknown actions: %s', \implode(', ', \array_keys($configuration))));
         }
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function fix(\SplFileInfo $file, \PhpCsFixer\Tokenizer\Tokens $tokens): void
     {
         for ($i = 0, $j = 0, $total = \count($tokens) - 1; $i < $total; $j = ++$i) {
@@ -175,64 +154,43 @@ class WhitespaceAroundReferenceFixer implements \PhpCsFixer\Fixer\FixerInterface
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function isCandidate(\PhpCsFixer\Tokenizer\Tokens $tokens): bool
     {
         return $tokens->isTokenKindFound(\PhpCsFixer\Tokenizer\CT::T_RETURN_REF);
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function getPriority(): int
     {
         return -1;
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function getName(): string
     {
         return 'Custom/whitespace_around_reference';
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function isRisky(): bool
     {
         return false;
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function supports(\SplFileInfo $file): bool
     {
         return true;
     }
 
 
-    /**
-     * @param string                       $action
-     * @param string                       $scope
-     * @param \PhpCsFixer\Tokenizer\Tokens $tokens
-     * @param int                          $position
-     */
     private function performAction(string $action, string $scope, \PhpCsFixer\Tokenizer\Tokens $tokens, int &$position): void
     {
         $modifier = (self::SCOPE_AFTER === $scope) ? +1 : -1;
 
         switch ($action) {
             case self::ACTION_NONE:
-                if (IsSet($tokens[$position + $modifier]) && $tokens[$position + $modifier]->isWhitespace()) {
+                if (isset($tokens[$position + $modifier]) && $tokens[$position + $modifier]->isWhitespace()) {
                     $tokens->clearAt($position + $modifier);
 
                     --$position;
@@ -240,7 +198,7 @@ class WhitespaceAroundReferenceFixer implements \PhpCsFixer\Fixer\FixerInterface
             break;
 
             case self::ACTION_ONE:
-                if (IsSet($tokens[$position + $modifier])) {
+                if (isset($tokens[$position + $modifier])) {
                     if ($tokens[$position + $modifier]->isWhitespace()) {
                         $tokens[$position + $modifier] = new \PhpCsFixer\Tokenizer\Token([T_WHITESPACE, ' ']);
                     } else {
@@ -252,7 +210,7 @@ class WhitespaceAroundReferenceFixer implements \PhpCsFixer\Fixer\FixerInterface
             break;
 
             case self::ACTION_AT_LEAST_ONE:
-                if (IsSet($tokens[$position + $modifier]) && !$tokens[$position + $modifier]->isWhitespace()) {
+                if (isset($tokens[$position + $modifier]) && !$tokens[$position + $modifier]->isWhitespace()) {
                     $tokens->insertAt($position + $modifier + 1, new \PhpCsFixer\Tokenizer\Token([T_WHITESPACE, ' ']));
 
                     ++$position;
@@ -281,6 +239,7 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
     public const PLACE_VAR = 'var';
     public const PLACE_COVERS = 'covers';
 
+    public const PLACE_COVERS_DEFAULT_CLASS = 'coversDefaultClass';
     /**
      * All possible places.
      */
@@ -293,10 +252,11 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
         self::PLACE_METHOD        => self::PLACE_METHOD,
         self::PLACE_VAR           => self::PLACE_VAR,
         self::PLACE_COVERS        => self::PLACE_COVERS,
+        self::PLACE_COVERS_DEFAULT_CLASS => self::PLACE_COVERS_DEFAULT_CLASS,
     ];
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     private $imports = [];
 
@@ -306,14 +266,12 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
     private $namespace = '';
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     private $places;
 
 
     /**
-     * FQNControlFixer constructor.
-     *
      * @param string[] $places
      *
      * @throws \DomainException
@@ -321,8 +279,8 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
     public function __construct(array $places = self::ALL_PLACES)
     {
         foreach ($places as $place) {
-            if (!array_key_exists($place, self::ALL_PLACES)) {
-                throw new DomainException(sprintf('Unknown place: %s', $place));
+            if (!\array_key_exists($place, self::ALL_PLACES)) {
+                throw new DomainException(\sprintf('Unknown place: %s', $place));
             }
         }
 
@@ -331,8 +289,6 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
 
 
     /**
-     * {@inheritdoc}
-     *
      * @throws \RuntimeException
      */
     public function fix(\SplFileInfo $file, \PhpCsFixer\Tokenizer\Tokens $tokens): void
@@ -369,8 +325,8 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
                             $group .= $tokens[$k]->getContent();
                         }
 
-                        foreach (preg_split('/\s*,\s*/', trim($group)) as $item) {
-                            $this->addImport(sprintf('%s%s', $import, trim($item)));
+                        foreach (\preg_split('/\s*,\s*/', \trim($group)) as $item) {
+                            $this->addImport(\sprintf('%s%s', $import, \trim($item)));
                         }
 
                         $i = $end + 1;
@@ -389,17 +345,17 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
                 }
 
                 if (null === $group) {
-                    $this->addImport(trim($import));
+                    $this->addImport(\trim($import));
                 }
             } elseif ($tokens[$i]->isGivenKind(T_DOC_COMMENT)) {
-                $pattern = sprintf('/\*\s*@(%s)\s+(.+)/i', implode('|', array_map(function (string $place) {
-                    return preg_quote($place, '/');
+                $pattern = \sprintf('/\*\s*@(%s)\s+(.+)/i', \implode('|', \array_map(function (string $place) {
+                    return \preg_quote($place, '/');
                 }, $this->places)));
 
                 $tokens[$i] = new \PhpCsFixer\Tokenizer\Token([
                     T_DOC_COMMENT,
-                    preg_replace_callback($pattern, function (array $match) {
-                        switch (strtolower($match[1])) {
+                    \preg_replace_callback($pattern, function (array $match) {
+                        switch (\strtolower($match[1])) {
                             case self::PLACE_PARAM:
                             case self::PLACE_PROPERTY:
                             case self::PLACE_PROPERTY_READ:
@@ -425,7 +381,7 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
                             break;
                         }
 
-                        return sprintf('%s%s', substr($match[0], 0, -strlen($match[2])), $fixed);
+                        return \sprintf('%s%s', \substr($match[0], 0, -\strlen($match[2])), $fixed);
                     }, $tokens[$i]->getContent()),
                 ]);
             }
@@ -433,9 +389,6 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function isCandidate(\PhpCsFixer\Tokenizer\Tokens $tokens): bool
     {
         return $tokens->isAllTokenKindsFound([
@@ -445,9 +398,6 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function getPriority(): int
     {
         // Should be run before PhpdocAlignFixer (-21), before NoUnusedImportsFixer (-10) and before PhpdocTypesOrderFixer (0)
@@ -455,27 +405,18 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function getName(): string
     {
         return 'Custom/fqn_control';
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function isRisky(): bool
     {
         return false;
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function supports(\SplFileInfo $file): bool
     {
         return true;
@@ -483,22 +424,18 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
 
 
     /**
-     * @param string $content
-     *
-     * @return string
-     *
      * @throws \RuntimeException
      */
     private function handleParam(string $content): string
     {
-        if ('$' === $content[0] && preg_match('/(\$\S+\s+)(.+)/', $content, $match)) {
+        if ('$' === $content[0] && \preg_match('/(\$\S+\s+)(.+)/', $content, $match)) {
             [
                 1 => $variable,
                 2 => $typeHints,
             ] = $match;
 
             $format = '%2$s%1$s';
-        } elseif (preg_match('/(.+?)(\s+\$.+)/', $content, $match)) {
+        } elseif (\preg_match('/(.+?)(\s+\$.+)/', $content, $match)) {
             [
                 2 => $variable,
                 1 => $typeHints,
@@ -509,63 +446,51 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
             return $content;
         }
 
-        return sprintf($format, $this->applyFQN($typeHints), $variable);
+        return \sprintf($format, $this->applyFQN($typeHints), $variable);
     }
 
 
     /**
-     * @param string $content
-     *
-     * @return string
-     *
      * @throws \RuntimeException
      */
     private function handleReturn(string $content): string
     {
-        $firstWhitespace = strpos($content, ' ');
+        $firstWhitespace = \strpos($content, ' ');
         $comment = '';
 
         if (false !== $firstWhitespace) {
-            $firstPipeline = strpos($content, '|');
-            $firstCutOff = max((false === $firstPipeline) ? -1 : $firstPipeline, $firstWhitespace);
-            $comment = substr($content, $firstCutOff);
-            $content = substr($content, 0, $firstCutOff);
+            $firstPipeline = \strpos($content, '|');
+            $firstCutOff = \max((false === $firstPipeline) ? -1 : $firstPipeline, $firstWhitespace);
+            $comment = \substr($content, $firstCutOff);
+            $content = \substr($content, 0, $firstCutOff);
         }
 
-        return sprintf('%s%s', $this->applyFQN($content), $comment);
+        return \sprintf('%s%s', $this->applyFQN($content), $comment);
     }
 
 
     /**
-     * @param string $content
-     *
-     * @return string
-     *
      * @throws \RuntimeException
      */
     private function handleMethod(string $content): string
     {
-        return preg_replace_callback('/\s*(?:static\s+)?(.*?)\s+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\(.*\)\s*$/i', function (array $match) {
-            return str_replace($match[1], $this->applyFQN($match[1]), $match[0]);
+        return \preg_replace_callback('/\s*(?:static\s+)?(.*?)\s+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\(.*\)\s*$/i', function (array $match) {
+            return \str_replace($match[1], $this->applyFQN($match[1]), $match[0]);
         }, $content);
     }
 
 
     /**
-     * @param string $content
-     *
-     * @return string
-     *
      * @throws \RuntimeException
      */
     private function handleCovers(string $content): string
     {
-        if (preg_match('/^([\w\s\\\\]+?)(\<extended\>)?(::.+)?$/i', $content, $match)) {
+        if (\preg_match('/^([\w\s\\\\]+?)(<extended>)?(::.+)?$/i', $content, $match)) {
             unset($match[0]);
 
             $match[1] = $this->applyFQN($match[1]);
 
-            return implode($match);
+            return \implode($match);
         }
 
         return $content;
@@ -573,16 +498,14 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
 
 
     /**
-     * @param string $fqn
-     *
      * @throws \RuntimeException
      */
     private function addImport(string $fqn): void
     {
         $import = $this->getUseNameAndNamespace($fqn);
 
-        if (array_key_exists($import['name'], $this->imports)) {
-            throw new RuntimeException(sprintf('Import "%s" is already defined', $import['name']));
+        if (\array_key_exists($import['name'], $this->imports)) {
+            throw new RuntimeException(\sprintf('Import "%s" is already defined', $import['name']));
         }
 
         $this->imports[$import['name']] = $import['fqn'];
@@ -591,18 +514,14 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
 
 
     /**
-     * @param string $name
-     *
-     * @return string
-     *
      * @throws \RuntimeException
      */
     private function getImportFQN(string $name): string
     {
-        if (!array_key_exists($name, $this->imports)) {
-            $class = sprintf('%s\\%s', $this->namespace, $name);
+        if (!\array_key_exists($name, $this->imports)) {
+            $class = \sprintf('%s\\%s', $this->namespace, $name);
 
-            if (!class_exists($class)) {
+            if (!\class_exists($class)) {
                 return $name;
                 //throw new RuntimeException(sprintf('Import "%s" is not defined and is not in current namespace "%s" either', $name, $this->namespace));
             }
@@ -614,36 +533,26 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
     }
 
 
-    /**
-     * @param string $use
-     *
-     * @return array
-     */
     private function getUseNameAndNamespace(string $use): array
     {
-        if (preg_match('/\s+as\s+(.+)$/i', $use, $match)) {
+        if (\preg_match('/\s+as\s+(.+)$/i', $use, $match)) {
             $name = $match[1];
-            $use = substr($use, 0, -strlen($match[0]));
+            $use = \substr($use, 0, -\strlen($match[0]));
         } else {
-            $lastIndexOf = strrpos($use, '\\');
-            $name = false === $lastIndexOf ? $use : trim(substr($use, $lastIndexOf + 1));
+            $lastIndexOf = \strrpos($use, '\\');
+            $name = false === $lastIndexOf ? $use : \trim(\substr($use, $lastIndexOf + 1));
         }
 
         return [
             'name' => $name,
-            'fqn'  => preg_replace('/\s+/', '', $use),
+            'fqn'  => \preg_replace('/\s+/', '', $use),
         ];
     }
 
 
-    /**
-     * @param string $typeHint
-     *
-     * @return bool
-     */
     private function isBasicType(string $typeHint): bool
     {
-        return in_array(strtolower($typeHint), [
+        return \in_array(\strtolower($typeHint), [
             'bool',
             'boolean',
             'int',
@@ -664,23 +573,19 @@ class FQNControlFixer implements \PhpCsFixer\Fixer\FixerInterface
 
 
     /**
-     * @param string $content
-     *
-     * @return string
-     *
      * @throws \RuntimeException
      */
     private function applyFQN(string $content): string
     {
-        $typeHintsArray = preg_split('/(\s*\|\s*)/', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $typeHintsArray = \preg_split('/(\s*\|\s*)/', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
 
         foreach ($typeHintsArray as $index => $typeHint) {
-            if (0 === ($index % 2) && '\\' !== $typeHint[0] && preg_match('/(.+?)([\[\]\s]+)?$/im', $typeHint, $match) && !$this->isBasicType($match[1])) {
-                $typeHintsArray[$index] = sprintf('%s%s', $this->getImportFQN($match[1]), $match[2] ?? '');
+            if (0 === ($index % 2) && '\\' !== $typeHint[0] && \preg_match('/(.+?)([\[\]\s]+)?$/m', $typeHint, $match) && !$this->isBasicType($match[1])) {
+                $typeHintsArray[$index] = \sprintf('%s%s', $this->getImportFQN($match[1]), $match[2] ?? '');
             }
         }
 
-        return implode($typeHintsArray);
+        return \implode($typeHintsArray);
     }
 }
 
@@ -766,6 +671,9 @@ return (new PhpCsFixer\Config())
             'spacing' => 'one',
         ],
 
+        'constant_case' => [
+            'case' => 'lower',
+        ],
         'declare_equal_normalize' => [
             'space' => 'none',
         ],
@@ -782,6 +690,7 @@ return (new PhpCsFixer\Config())
         ],
 
         'explicit_indirect_variable' => true,
+        'final_static_access'        => false,
         'full_opening_tag'           => true,
 
         'function_declaration' => [
@@ -790,6 +699,11 @@ return (new PhpCsFixer\Config())
 
         'function_to_constant'    => true,
         'function_typehint_space' => true,
+        'global_namespace_import' => [
+            'import_classes'   => null,
+            'import_constants' => null,
+            'import_functions' => null,
+        ],
         'include'                 => true,
 
         'increment_style' => [
@@ -804,7 +718,6 @@ return (new PhpCsFixer\Config())
 
         'line_ending'           => true,
         'lowercase_cast'        => true,
-        'lowercase_constants'   => true,
         'lowercase_keywords'    => true,
         'magic_constant_casing' => true,
 
@@ -823,6 +736,7 @@ return (new PhpCsFixer\Config())
         'no_blank_lines_after_class_opening'     => false,
         'no_blank_lines_after_phpdoc'            => true,
         'no_closing_tag'                         => true,
+        'no_empty_phpdoc'                        => true,
         'no_empty_statement'                     => true,
 
         'no_extra_blank_lines' => [
@@ -848,6 +762,11 @@ return (new PhpCsFixer\Config())
         'no_spaces_around_offset'                     => true,
         'no_spaces_inside_parenthesis'                => true,
         'no_superfluous_elseif'                       => true,
+        'no_superfluous_phpdoc_tags' => [
+            'allow_mixed'         => true,
+            'allow_unused_params' => true,
+            'remove_inheritdoc'   => true,
+        ],
         'no_trailing_whitespace'                      => true,
         'no_trailing_whitespace_in_comment'           => true,
         'no_unneeded_control_parentheses'             => true,
@@ -860,6 +779,9 @@ return (new PhpCsFixer\Config())
         'no_whitespace_in_blank_line'                 => true,
         'not_operator_with_space'                     => false,
         'not_operator_with_successor_space'           => false,
+        'nullable_type_declaration_for_default_null_value' => [
+            'use_nullable_type_declaration' => true,
+        ],
         'object_operator_without_whitespace'          => true,
 
         'ordered_class_elements' => [
@@ -893,20 +815,35 @@ return (new PhpCsFixer\Config())
         'php_unit_fqcn_annotation' => true,
 
         'phpdoc_add_missing_param_annotation' => [
-            'only_untyped' => false,
+            'only_untyped' => true,
         ],
 
         'phpdoc_align'                   => true,
         'phpdoc_indent'                  => true,
         //'phpdoc_inline_tag'              => true,
+        'phpdoc_line_span' => [
+            'const'    => 'multi',
+            'method'   => 'multi',
+            'property' => 'multi',
+        ],
+
+        'phpdoc_no_access'             => true,
+        'phpdoc_no_empty_return'       => true,
         'phpdoc_no_useless_inheritdoc'   => true,
+        'phpdoc_no_package'            => true,
         'phpdoc_order'                   => true,
+        'phpdoc_return_self_reference' => [
+            'replacements' => [
+                'this' => 'self',
+            ],
+        ],
         'phpdoc_scalar'                  => true,
         'phpdoc_separation'              => true,
         'phpdoc_single_line_var_spacing' => true,
         'phpdoc_summary'                 => true,
         'phpdoc_to_comment'              => false,  // Set to false because it affects @noinspection
         'phpdoc_trim'                    => true,
+        'phpdoc_trim_consecutive_blank_line_separation' => true,
         'phpdoc_types'                   => true,
 
         'phpdoc_types_order' => [
@@ -914,6 +851,7 @@ return (new PhpCsFixer\Config())
             'null_adjustment' => 'always_last',
         ],
 
+        'phpdoc_var_annotation_correct_order' => true,
         'phpdoc_var_without_name' => false, // Set to false because it also (sometimes) removes variable name not only in PhpDocs related to class fields
 
         'return_type_declaration' => [
@@ -921,6 +859,7 @@ return (new PhpCsFixer\Config())
         ],
 
         'self_accessor'                      => true,
+        'self_static_accessor'               => true,
         'semicolon_after_instruction'        => true,
         'short_scalar_cast'                  => true,
         'simplified_null_return'             => true,
