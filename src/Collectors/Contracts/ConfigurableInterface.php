@@ -6,7 +6,7 @@ namespace Miquido\RequestDataCollector\Collectors\Contracts;
 interface ConfigurableInterface
 {
     /**
-     * @param array $config
+     * @param array<string, mixed> $config
      *
      * @return mixed
      */

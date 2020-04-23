@@ -5,8 +5,5 @@ namespace Miquido\RequestDataCollector\Collectors\Contracts;
 
 interface DataCollectorInterface
 {
-    /**
-     * @return array
-     */
     public function collect(): array;
 }

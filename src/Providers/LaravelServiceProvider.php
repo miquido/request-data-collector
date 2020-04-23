@@ -19,8 +19,6 @@ class LaravelServiceProvider extends ServiceProvider
 
     /**
      * Register services.
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -35,8 +33,6 @@ class LaravelServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -47,17 +43,11 @@ class LaravelServiceProvider extends ServiceProvider
         $this->registerMiddleware(RequestDataCollectorMiddleware::class);
     }
 
-    /**
-     * @return string
-     */
     protected function getConfigPath(): string
     {
         return $this->app->make('path.config');
     }
 
-    /**
-     * @param string $middleware
-     */
     protected function registerMiddleware(string $middleware): void
     {
         /**

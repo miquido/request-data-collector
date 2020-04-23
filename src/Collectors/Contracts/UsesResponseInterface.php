@@ -7,8 +7,5 @@ use Symfony\Component\HttpFoundation\Response;
 
 interface UsesResponseInterface
 {
-    /**
-     * @param \Symfony\Component\HttpFoundation\Response $response
-     */
     public function setResponse(Response $response): void;
 }

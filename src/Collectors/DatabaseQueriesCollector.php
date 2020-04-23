@@ -25,17 +25,11 @@ class DatabaseQueriesCollector implements DataCollectorInterface, ConfigurableIn
      */
     private $queryLog = [];
 
-    /**
-     * @param \Illuminate\Database\DatabaseManager $databaseManager
-     */
     public function __construct(DatabaseManager $databaseManager)
     {
         $this->databaseManager = $databaseManager;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function setConfig(array $config): void
     {
         $this->setConfigTrait($config);
@@ -69,9 +63,6 @@ class DatabaseQueriesCollector implements DataCollectorInterface, ConfigurableIn
         }
     }
 
-    /**
-     * @inheritdoc
-     */
     public function collect(): array
     {
         foreach ($this->queryLog as $index => $entry) {
@@ -84,11 +75,6 @@ class DatabaseQueriesCollector implements DataCollectorInterface, ConfigurableIn
         return $this->queryLog;
     }
 
-    /**
-     * @param string|null $name
-     *
-     * @return string
-     */
     private function getConnectionName(?string $name): string
     {
         return $name ?? '_default';

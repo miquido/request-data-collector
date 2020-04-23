@@ -26,9 +26,6 @@ class DatabaseQueriesCollectorTest extends TestCase
      */
     private $databaseQueriesCollector;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp(): void
     {
         $this->databaseManagerProphecy = $this->prophesize(DatabaseManager::class);
@@ -103,9 +100,12 @@ class DatabaseQueriesCollectorTest extends TestCase
 
         /**
          * @var \Illuminate\Database\Connection $defaultConnectionMock
-         * @var \Illuminate\Database\Connection $fooConnectionMock
          */
         $defaultConnectionMock = $defaultConnectionProphecy->reveal();
+
+        /**
+         * @var \Illuminate\Database\Connection $fooConnectionMock
+         */
         $fooConnectionMock = $fooConnectionProphecy->reveal();
 
         $queryExecutedEvent1 = new QueryExecuted('SOME SQL 1;', [1, 2, 3], 12.34, $defaultConnectionMock);
@@ -202,8 +202,6 @@ class DatabaseQueriesCollectorTest extends TestCase
     }
 
     /**
-     * @param string|null $connectionName
-     *
      * @return \Illuminate\Database\Connection&\Prophecy\Prophecy\ObjectProphecy
      */
     private function assertQueriesLoggingWasEnabledForConnection(?string $connectionName): object
@@ -229,7 +227,6 @@ class DatabaseQueriesCollectorTest extends TestCase
 
     /**
      * @param \Illuminate\Database\Connection&\Prophecy\Prophecy\ObjectProphecy $connectionProphecy
-     * @param \Illuminate\Database\Events\QueryExecuted                         $queryExecutedEvent
      */
     private function assertQueryExecutedEventWasFired(ObjectProphecy $connectionProphecy, QueryExecuted $queryExecutedEvent): void
     {

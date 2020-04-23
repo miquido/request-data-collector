@@ -60,9 +60,6 @@ class RequestResponseCollectorTest extends TestCase
      */
     private $parameterBagProphecy;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp(): void
     {
         if (!\defined('LARAVEL_START')) {
@@ -74,8 +71,7 @@ class RequestResponseCollectorTest extends TestCase
         $this->parameterBagProphecy = $this->prophesize(ParameterBag::class);
 
         /**
-         * @var \Illuminate\Http\Request  $requestMock
-         * @var \Illuminate\Http\Response $responseMock
+         * @var \Illuminate\Http\Request $requestMock
          */
         $requestMock = $this->requestProphecy->reveal();
 
@@ -121,13 +117,22 @@ class RequestResponseCollectorTest extends TestCase
     {
         /**
          * @var \Symfony\Component\HttpFoundation\ParameterBag&\Prophecy\Prophecy\ObjectProphecy $parameterBagProphecy_get
-         * @var \Symfony\Component\HttpFoundation\ParameterBag&\Prophecy\Prophecy\ObjectProphecy $parameterBagProphecy_post
-         * @var \Symfony\Component\HttpFoundation\ParameterBag&\Prophecy\Prophecy\ObjectProphecy $parameterBagProphecy_server
-         * @var \Symfony\Component\HttpFoundation\ParameterBag&\Prophecy\Prophecy\ObjectProphecy $parameterBagProphecy_cookie
          */
         $parameterBagProphecy_get = $this->prophesize(ParameterBag::class);
+
+        /**
+         * @var \Symfony\Component\HttpFoundation\ParameterBag&\Prophecy\Prophecy\ObjectProphecy $parameterBagProphecy_post
+         */
         $parameterBagProphecy_post = $this->prophesize(ParameterBag::class);
+
+        /**
+         * @var \Symfony\Component\HttpFoundation\ParameterBag&\Prophecy\Prophecy\ObjectProphecy $parameterBagProphecy_server
+         */
         $parameterBagProphecy_server = $this->prophesize(ParameterBag::class);
+
+        /**
+         * @var \Symfony\Component\HttpFoundation\ParameterBag&\Prophecy\Prophecy\ObjectProphecy $parameterBagProphecy_cookie
+         */
         $parameterBagProphecy_cookie = $this->prophesize(ParameterBag::class);
 
         $parameterBagProphecy_get->all()->shouldBeCalled()->willReturn($this->response['_GET']);

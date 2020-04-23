@@ -9,12 +9,12 @@ use Miquido\RequestDataCollector\Filters\Contracts\FilterInterface;
 class UserAgentFilter implements FilterInterface
 {
     /**
-     * @var array
+     * @var string[]
      */
     private $userAgents = [];
 
     /**
-     * @param array $userAgents
+     * @param string[] $userAgents
      */
     public function __construct(array $userAgents)
     {
@@ -23,9 +23,6 @@ class UserAgentFilter implements FilterInterface
         }
     }
 
-    /**
-     * @inheritdoc
-     */
     public function accept(Request $request): bool
     {
         return isset($this->userAgents[\mb_strtolower($request->server('HTTP_USER_AGENT'))]);

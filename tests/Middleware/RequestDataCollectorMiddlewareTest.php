@@ -44,9 +44,6 @@ class RequestDataCollectorMiddlewareTest extends TestCase
      */
     private $requestDataCollectorMiddleware;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp(): void
     {
         $this->containerProphecy = $this->prophesize(Container::class);
@@ -55,10 +52,13 @@ class RequestDataCollectorMiddlewareTest extends TestCase
         $this->responseDummy = $this->prophesize(Response::class)->reveal();
 
         /**
-         * @var \Illuminate\Contracts\Container\Container          $containerMock
-         * @var \Miquido\RequestDataCollector\RequestDataCollector $requestDataCollectorMock
+         * @var \Illuminate\Contracts\Container\Container $containerMock
          */
         $containerMock = $this->containerProphecy->reveal();
+
+        /**
+         * @var \Miquido\RequestDataCollector\RequestDataCollector $requestDataCollectorMock
+         */
         $requestDataCollectorMock = $this->requestDataCollectorProphecy->reveal();
 
         $this->requestDataCollectorMiddleware = new RequestDataCollectorMiddleware($containerMock, $requestDataCollectorMock);
