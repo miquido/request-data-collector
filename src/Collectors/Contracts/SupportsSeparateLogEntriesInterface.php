@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Miquido\RequestDataCollector\Collectors\Contracts;
 
-interface ThinkOfBetterNameInterface
+interface SupportsSeparateLogEntriesInterface
 {
     /**
      * @param array<mixed> $collected
@@ -12,5 +12,5 @@ interface ThinkOfBetterNameInterface
      *
      * @see \Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface::collect()
      */
-    public function getThinkOfBetterName(array $collected): iterable;
+    public function getSeparateLogEntries(array $collected): iterable;
 }

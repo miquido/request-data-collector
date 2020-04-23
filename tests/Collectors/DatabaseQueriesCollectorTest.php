@@ -161,6 +161,58 @@ class DatabaseQueriesCollectorTest extends TestCase
         ], $this->databaseQueriesCollector->collect());
     }
 
+    /**
+     * @depends testCollectWithEmptyListOfConnections
+     * @depends testCollectWithDefaultConnectionNameSet
+     * @depends testCollectWithMultipleConnectionNamesSet
+     *
+     * @covers ::getSeparateLogEntries
+     */
+    public function testGetSeparateLogEntriesForEachConnection(): void
+    {
+        $defaultConnectionProphecy = $this->assertQueriesLoggingWasEnabledForConnection(null);
+        $fooConnectionProphecy = $this->assertQueriesLoggingWasEnabledForConnection('foo');
+        $this->assertQueriesLoggingWasEnabledForConnection('bar');
+
+        /**
+         * @var \Illuminate\Database\Connection $defaultConnectionMock
+         */
+        $defaultConnectionMock = $defaultConnectionProphecy->reveal();
+
+        /**
+         * @var \Illuminate\Database\Connection $fooConnectionMock
+         */
+        $fooConnectionMock = $fooConnectionProphecy->reveal();
+
+        $queryExecutedEvent1 = new QueryExecuted('SOME SQL 1;', [1, 2, 3], 12.34, $defaultConnectionMock);
+        $queryExecutedEvent2 = new QueryExecuted('SOME SQL 2;', [4, 5, 6], 5678.0, $fooConnectionMock);
+        $queryExecutedEvent3 = new QueryExecuted('SOME SQL 2;', [7, 8, 9], 9.0, $fooConnectionMock);
+
+        $this->assertQueryExecutedEventWasFired($defaultConnectionProphecy, $queryExecutedEvent1);
+        $this->assertQueryExecutedEventWasFired($fooConnectionProphecy, $queryExecutedEvent2, $queryExecutedEvent3);
+
+        $this->databaseQueriesCollector->setConfig([
+            'connections' => [
+                null,
+                'foo',
+                'bar',
+            ],
+        ]);
+
+        $separateLogEntries = [];
+
+        foreach ($this->databaseQueriesCollector->getSeparateLogEntries($this->databaseQueriesCollector->collect()) as $key => $logEntry) {
+            $separateLogEntries[$key] = $logEntry;
+        }
+
+        // Check if no log entries overlapped
+        self::assertCount(12, $separateLogEntries);
+
+        self::assertSeparateCollectorQueriesWereRan($separateLogEntries, '_default', 1, [$queryExecutedEvent1]);
+        self::assertSeparateCollectorQueriesWereRan($separateLogEntries, 'foo', 1, [$queryExecutedEvent2, $queryExecutedEvent3]);
+        self::assertSeparateCollectorNoQueriesWereRan($separateLogEntries, 'bar');
+    }
+
     public function testSkipRegisteringEventListenerForSameConnection(): void
     {
         $defaultConnectionProphecy = $this->assertQueriesLoggingWasEnabledForConnection(null);
@@ -229,19 +281,61 @@ class DatabaseQueriesCollectorTest extends TestCase
     /**
      * @param \Illuminate\Database\Connection&\Prophecy\Prophecy\ObjectProphecy $connectionProphecy
      */
-    private function assertQueryExecutedEventWasFired(ObjectProphecy $connectionProphecy, QueryExecuted $queryExecutedEvent): void
+    private function assertQueryExecutedEventWasFired(ObjectProphecy $connectionProphecy, QueryExecuted ...$queryExecutedEvents): void
     {
         $connectionProphecy->listen(Argument::type('callable'))
-            ->will(function (array $args) use ($queryExecutedEvent) {
+            ->will(function (array $args) use (&$queryExecutedEvents) {
                 /**
                  * @var callable $callback
                  */
                 [$callback] = $args;
 
-                return $callback($queryExecutedEvent);
+                foreach ($queryExecutedEvents as $queryExecutedEvent) {
+                    $callback($queryExecutedEvent);
+                }
+
+                return true;
             });
 
         $connectionProphecy->getName()
-            ->shouldBeCalledTimes(2);
+            ->shouldBeCalledTimes(1 + \count($queryExecutedEvents));
+    }
+
+    private static function assertSeparateCollectorNoQueriesWereRan(array $logEntires, string $connection): void
+    {
+        self::assertArrayHasKey(\sprintf('%s.queries_count', $connection), $logEntires);
+        self::assertSame(0, $logEntires[\sprintf('%s.queries_count', $connection)]);
+
+        self::assertArrayHasKey(\sprintf('%s.distinct_queries_count', $connection), $logEntires);
+        self::assertSame(0, $logEntires[\sprintf('%s.distinct_queries_count', $connection)]);
+
+        self::assertArrayHasKey(\sprintf('%s.distinct_queries_ratio', $connection), $logEntires);
+        self::assertSame(0.0, $logEntires[\sprintf('%s.distinct_queries_ratio', $connection)]);
+    }
+
+    /**
+     * @param \Illuminate\Database\Events\QueryExecuted[] $queries
+     */
+    private static function assertSeparateCollectorQueriesWereRan(array $logEntires, string $connection, int $numberOfDistinctQueries, array $queries): void
+    {
+        $numberOfQueries = \count($queries);
+
+        self::assertArrayHasKey(\sprintf('%s.queries_count', $connection), $logEntires);
+        self::assertSame($numberOfQueries, $logEntires[\sprintf('%s.queries_count', $connection)]);
+
+        self::assertArrayHasKey(\sprintf('%s.distinct_queries_count', $connection), $logEntires);
+        self::assertSame($numberOfDistinctQueries, $logEntires[\sprintf('%s.distinct_queries_count', $connection)]);
+
+        self::assertArrayHasKey(\sprintf('%s.distinct_queries_ratio', $connection), $logEntires);
+        self::assertSame($numberOfDistinctQueries / (float) $numberOfQueries, $logEntires[\sprintf('%s.distinct_queries_ratio', $connection)]);
+
+        foreach (\array_values($queries) as $index => $query) {
+            $key = \sprintf('%s.query.%d', $connection, $index);
+
+            self::assertArrayHasKey($key, $logEntires);
+            self::assertSame($query->sql, $logEntires[$key]['query']);
+            self::assertSame($query->bindings, $logEntires[$key]['bindings']);
+            self::assertSame($query->time / 1000.0, $logEntires[$key]['time']);
+        }
     }
 }

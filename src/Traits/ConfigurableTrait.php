@@ -21,7 +21,7 @@ trait ConfigurableTrait
             return $this->config;
         }
 
-        return array_key_exists($key, $this->config) ?
+        return \array_key_exists($key, $this->config) ?
             $this->config[$key] :
             $default;
     }
