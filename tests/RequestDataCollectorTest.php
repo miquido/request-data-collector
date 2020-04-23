@@ -18,6 +18,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * @covers \Miquido\RequestDataCollector\RequestDataCollector
  * @coversDefaultClass \Miquido\RequestDataCollector\RequestDataCollector
  */
 class RequestDataCollectorTest extends TestCase

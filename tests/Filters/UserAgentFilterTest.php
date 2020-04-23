@@ -8,6 +8,7 @@ use Miquido\RequestDataCollector\Filters\UserAgentFilter;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @covers \Miquido\RequestDataCollector\Filters\UserAgentFilter
  * @coversDefaultClass \Miquido\RequestDataCollector\Filters\UserAgentFilter
  */
 class UserAgentFilterTest extends TestCase

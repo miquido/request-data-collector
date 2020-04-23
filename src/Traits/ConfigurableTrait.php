@@ -17,8 +17,12 @@ trait ConfigurableTrait
 
     public function getConfig(?string $key = null, $default = null)
     {
-        return null === $key ?
-            $this->config :
-            $this->config[$key] ?? $default;
+        if (null === $key) {
+            return $this->config;
+        }
+
+        return array_key_exists($key, $this->config) ?
+            $this->config[$key] :
+            $default;
     }
 }

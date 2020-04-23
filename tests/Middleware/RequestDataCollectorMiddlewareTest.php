@@ -15,6 +15,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 /**
+ * @covers \Miquido\RequestDataCollector\Middleware\RequestDataCollectorMiddleware
  * @coversDefaultClass \Miquido\RequestDataCollector\Middleware\RequestDataCollectorMiddleware
  */
 class RequestDataCollectorMiddlewareTest extends TestCase

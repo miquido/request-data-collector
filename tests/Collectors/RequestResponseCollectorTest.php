@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 /**
+ * @covers \Miquido\RequestDataCollector\Collectors\RequestResponseCollector
  * @coversDefaultClass \Miquido\RequestDataCollector\Collectors\RequestResponseCollector
  */
 class RequestResponseCollectorTest extends TestCase

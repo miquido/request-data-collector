@@ -12,6 +12,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
 /**
+ * @covers \Miquido\RequestDataCollector\Collectors\DatabaseQueriesCollector
  * @coversDefaultClass \Miquido\RequestDataCollector\Collectors\DatabaseQueriesCollector
  */
 class DatabaseQueriesCollectorTest extends TestCase
