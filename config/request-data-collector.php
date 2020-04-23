@@ -157,7 +157,8 @@ return [
             ],
 
             /*
-             * You can override global logging format here. If null, global logging format is used.
+             * You can override global logging format here.
+             * If null, global logging format is used.
              */
             'logging_format' => null,
         ],

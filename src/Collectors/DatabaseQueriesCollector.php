@@ -76,19 +76,18 @@ class DatabaseQueriesCollector implements DataCollectorInterface, ConfigurableIn
         return $this->queryLog;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getThinkOfBetterName(array $collected): iterable
     {
         foreach ($collected as $connectionName => $statistics) {
             foreach ($statistics['queries'] as $index => $query) {
-                yield sprintf('%s.query.%d', $connectionName, $index) => $query;
+                yield \sprintf('%s.query.%d', $connectionName, $index) => $query;
             }
 
-            yield sprintf('%s.queries_count', $connectionName) => $statistics['queries_count'];
-            yield sprintf('%s.distinct_queries_count', $connectionName) => $statistics['distinct_queries_count'];
-            yield sprintf('%s.distinct_queries_ratio', $connectionName) => $statistics['distinct_queries_ratio'];
+            yield \sprintf('%s.queries_count', $connectionName) => $statistics['queries_count'];
+
+            yield \sprintf('%s.distinct_queries_count', $connectionName) => $statistics['distinct_queries_count'];
+
+            yield \sprintf('%s.distinct_queries_ratio', $connectionName) => $statistics['distinct_queries_ratio'];
         }
     }
 

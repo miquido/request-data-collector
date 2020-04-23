@@ -10,17 +10,11 @@ trait ConfigurableTrait
 {
     protected $config = [];
 
-    /**
-     * @inheritDoc
-     */
     public function setConfig(array $config): void
     {
         $this->config = $config;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getConfig(?string $key = null, $default = null)
     {
         return null === $key ?
