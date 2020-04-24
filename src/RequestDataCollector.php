@@ -108,28 +108,16 @@ class RequestDataCollector
 
             $collected = $collector->collect();
 
-            if (empty($collected)) {
-                $channel->debug(\sprintf('request-data-collector.%s.%s', $collectorName, $this->requestId));
-
-                continue;
-            }
-
-            if (!$collector instanceof SupportsSeparateLogEntriesInterface) {
+            if (
+                !empty($collected) &&
+                $collector instanceof SupportsSeparateLogEntriesInterface &&
+                self::LOGGING_FORMAT_SEPARATE === ($collector->getConfig('logging_format') ?? $this->config['logging_format'] ?? self::LOGGING_FORMAT_SINGLE)
+            ) {
+                foreach ($collector->getSeparateLogEntries($collected) as $index => $entry) {
+                    $channel->debug(\sprintf('request-data-collector.%s.%s.%s', $collectorName, $index, $this->requestId), $entry);
+                }
+            } else {
                 $channel->debug(\sprintf('request-data-collector.%s.%s', $collectorName, $this->requestId), $collected);
-
-                continue;
-            }
-
-            $loggingFormat = $collector->getConfig('logging_format') ?? $this->config['logging_format'] ?? self::LOGGING_FORMAT_SINGLE;
-
-            if (self::LOGGING_FORMAT_SEPARATE !== $loggingFormat) {
-                $channel->debug(\sprintf('request-data-collector.%s.%s', $collectorName, $this->requestId), $collected);
-
-                continue;
-            }
-
-            foreach ($collector->getSeparateLogEntries($collected) as $index => $entry) {
-                $channel->debug(\sprintf('request-data-collector.%s.%s.%s', $collectorName, $index, $this->requestId), $entry);
             }
         }
     }

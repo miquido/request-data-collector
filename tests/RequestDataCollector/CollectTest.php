@@ -103,13 +103,13 @@ class CollectTest extends AbstractRequestDataCollectorTest
             ->shouldBeCalledOnce()
             ->willReturn($this->loggerProphecy->reveal());
 
-        $this->loggerProphecy->debug(\sprintf('request-data-collector.%s.%s', 'test-collector-1', $requestDataCollector->getRequestId()))
+        $this->loggerProphecy->debug(\sprintf('request-data-collector.%s.%s', 'test-collector-1', $requestDataCollector->getRequestId()), [])
             ->shouldBeCalledOnce();
 
-        $this->loggerProphecy->debug(\sprintf('request-data-collector.%s.%s', 'test-collector-2', $requestDataCollector->getRequestId()))
+        $this->loggerProphecy->debug(\sprintf('request-data-collector.%s.%s', 'test-collector-2', $requestDataCollector->getRequestId()), [])
             ->shouldBeCalledOnce();
 
-        $this->loggerProphecy->debug(\sprintf('request-data-collector.%s.%s', 'test-collector-3', $requestDataCollector->getRequestId()))
+        $this->loggerProphecy->debug(\sprintf('request-data-collector.%s.%s', 'test-collector-3', $requestDataCollector->getRequestId()), [])
             ->shouldBeCalledOnce();
 
         $requestDataCollector->collect($responseDummy);
