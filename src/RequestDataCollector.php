@@ -108,22 +108,28 @@ class RequestDataCollector
 
             $collected = $collector->collect();
 
-            if (
-                !empty($collected) &&
-                $collector instanceof SupportsSeparateLogEntriesInterface &&
-                (
-                    self::LOGGING_FORMAT_SEPARATE === ($this->config['logging_format'] ?? self::LOGGING_FORMAT_SINGLE) ||
-                    (
-                        $collector instanceof ConfigurableInterface &&
-                        self::LOGGING_FORMAT_SEPARATE === $collector->getConfig('logging_format', self::LOGGING_FORMAT_SINGLE)
-                    )
-                )
-            ) {
-                foreach ($collector->getSeparateLogEntries($collected) as $index => $entry) {
-                    $channel->debug(\sprintf('request-data-collector.%s.%s.%s', $collectorName, $index, $this->requestId), $entry);
-                }
-            } else {
+            if (empty($collected)) {
+                $channel->debug(\sprintf('request-data-collector.%s.%s', $collectorName, $this->requestId));
+
+                continue;
+            }
+
+            if (!$collector instanceof SupportsSeparateLogEntriesInterface) {
                 $channel->debug(\sprintf('request-data-collector.%s.%s', $collectorName, $this->requestId), $collected);
+
+                continue;
+            }
+
+            $loggingFormat = $collector->getConfig('logging_format') ?? $this->config['logging_format'] ?? self::LOGGING_FORMAT_SINGLE;
+
+            if (self::LOGGING_FORMAT_SEPARATE !== $loggingFormat) {
+                $channel->debug(\sprintf('request-data-collector.%s.%s', $collectorName, $this->requestId), $collected);
+
+                continue;
+            }
+
+            foreach ($collector->getSeparateLogEntries($collected) as $index => $entry) {
+                $channel->debug(\sprintf('request-data-collector.%s.%s.%s', $collectorName, $index, $this->requestId), $entry);
             }
         }
     }
@@ -200,7 +206,7 @@ class RequestDataCollector
 
     private function configureCollectors(): void
     {
-        foreach ($this->config['collectors'] as $collectorName => $enabled) {
+        foreach ($this->config['collectors'] ?? [] as $collectorName => $enabled) {
             if (!$enabled) {
                 continue;
             }

@@ -18,7 +18,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 class DatabaseQueriesCollectorTest extends TestCase
 {
     /**
-     * @var \Illuminate\Database\DatabaseManager&\Prophecy\Prophecy\ObjectProphecy
+     * @var \Illuminate\Database\DatabaseManager|\Prophecy\Prophecy\ObjectProphecy
      */
     private $databaseManagerProphecy;
 
@@ -206,7 +206,7 @@ class DatabaseQueriesCollectorTest extends TestCase
         }
 
         // Check if no log entries overlapped
-        self::assertCount(12, $separateLogEntries);
+        self::assertCount(6, $separateLogEntries);
 
         self::assertSeparateCollectorQueriesWereRan($separateLogEntries, '_default', 1, [$queryExecutedEvent1]);
         self::assertSeparateCollectorQueriesWereRan($separateLogEntries, 'foo', 1, [$queryExecutedEvent2, $queryExecutedEvent3]);
@@ -255,12 +255,12 @@ class DatabaseQueriesCollectorTest extends TestCase
     }
 
     /**
-     * @return \Illuminate\Database\Connection&\Prophecy\Prophecy\ObjectProphecy
+     * @return \Illuminate\Database\Connection|\Prophecy\Prophecy\ObjectProphecy
      */
     private function assertQueriesLoggingWasEnabledForConnection(?string $connectionName): object
     {
         /**
-         * @var \Illuminate\Database\Connection&\Prophecy\Prophecy\ObjectProphecy $connectionProphecy
+         * @var \Illuminate\Database\Connection|\Prophecy\Prophecy\ObjectProphecy $connectionProphecy
          */
         $connectionProphecy = $this->prophesize(Connection::class);
 
@@ -279,7 +279,7 @@ class DatabaseQueriesCollectorTest extends TestCase
     }
 
     /**
-     * @param \Illuminate\Database\Connection&\Prophecy\Prophecy\ObjectProphecy $connectionProphecy
+     * @param \Illuminate\Database\Connection|\Prophecy\Prophecy\ObjectProphecy $connectionProphecy
      */
     private function assertQueryExecutedEventWasFired(ObjectProphecy $connectionProphecy, QueryExecuted ...$queryExecutedEvents): void
     {
@@ -301,41 +301,37 @@ class DatabaseQueriesCollectorTest extends TestCase
             ->shouldBeCalledTimes(1 + \count($queryExecutedEvents));
     }
 
-    private static function assertSeparateCollectorNoQueriesWereRan(array $logEntires, string $connection): void
+    private static function assertSeparateCollectorNoQueriesWereRan(array $logEntries, string $connection): void
     {
-        self::assertArrayHasKey(\sprintf('%s.queries_count', $connection), $logEntires);
-        self::assertSame(0, $logEntires[\sprintf('%s.queries_count', $connection)]);
-
-        self::assertArrayHasKey(\sprintf('%s.distinct_queries_count', $connection), $logEntires);
-        self::assertSame(0, $logEntires[\sprintf('%s.distinct_queries_count', $connection)]);
-
-        self::assertArrayHasKey(\sprintf('%s.distinct_queries_ratio', $connection), $logEntires);
-        self::assertSame(0.0, $logEntires[\sprintf('%s.distinct_queries_ratio', $connection)]);
+        self::assertArrayHasKey(\sprintf('%s.stats', $connection), $logEntries);
+        self::assertSame([
+            'queries_count'          => 0,
+            'distinct_queries_count' => 0,
+            'distinct_queries_ratio' => 0.0,
+        ], $logEntries[\sprintf('%s.stats', $connection)]);
     }
 
     /**
      * @param \Illuminate\Database\Events\QueryExecuted[] $queries
      */
-    private static function assertSeparateCollectorQueriesWereRan(array $logEntires, string $connection, int $numberOfDistinctQueries, array $queries): void
+    private static function assertSeparateCollectorQueriesWereRan(array $logEntries, string $connection, int $numberOfDistinctQueries, array $queries): void
     {
         $numberOfQueries = \count($queries);
 
-        self::assertArrayHasKey(\sprintf('%s.queries_count', $connection), $logEntires);
-        self::assertSame($numberOfQueries, $logEntires[\sprintf('%s.queries_count', $connection)]);
-
-        self::assertArrayHasKey(\sprintf('%s.distinct_queries_count', $connection), $logEntires);
-        self::assertSame($numberOfDistinctQueries, $logEntires[\sprintf('%s.distinct_queries_count', $connection)]);
-
-        self::assertArrayHasKey(\sprintf('%s.distinct_queries_ratio', $connection), $logEntires);
-        self::assertSame($numberOfDistinctQueries / (float) $numberOfQueries, $logEntires[\sprintf('%s.distinct_queries_ratio', $connection)]);
+        self::assertArrayHasKey(\sprintf('%s.stats', $connection), $logEntries);
+        self::assertSame([
+            'queries_count'          => $numberOfQueries,
+            'distinct_queries_count' => $numberOfDistinctQueries,
+            'distinct_queries_ratio' => $numberOfDistinctQueries / (float) $numberOfQueries,
+        ], $logEntries[\sprintf('%s.stats', $connection)]);
 
         foreach (\array_values($queries) as $index => $query) {
             $key = \sprintf('%s.query.%d', $connection, $index);
 
-            self::assertArrayHasKey($key, $logEntires);
-            self::assertSame($query->sql, $logEntires[$key]['query']);
-            self::assertSame($query->bindings, $logEntires[$key]['bindings']);
-            self::assertSame($query->time / 1000.0, $logEntires[$key]['time']);
+            self::assertArrayHasKey($key, $logEntries);
+            self::assertSame($query->sql, $logEntries[$key]['query']);
+            self::assertSame($query->bindings, $logEntries[$key]['bindings']);
+            self::assertSame($query->time / 1000.0, $logEntries[$key]['time']);
         }
     }
 }

@@ -88,7 +88,7 @@ class UserAgentFilterTest extends TestCase
     private function assertGotRequest(string $userAgent): Request
     {
         /**
-         * @var \Illuminate\Http\Request&\Prophecy\Prophecy\ObjectProphecy $requestProphecy
+         * @var \Illuminate\Http\Request|\Prophecy\Prophecy\ObjectProphecy $requestProphecy
          */
         $requestProphecy = $this->prophesize(Request::class);
 

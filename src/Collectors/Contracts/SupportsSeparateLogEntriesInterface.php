@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Miquido\RequestDataCollector\Collectors\Contracts;
 
-interface SupportsSeparateLogEntriesInterface
+interface SupportsSeparateLogEntriesInterface extends ConfigurableInterface
 {
     /**
      * @param array<mixed> $collected

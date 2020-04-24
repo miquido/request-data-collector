@@ -83,11 +83,11 @@ class DatabaseQueriesCollector implements DataCollectorInterface, ConfigurableIn
                 yield \sprintf('%s.query.%d', $connectionName, $index) => $query;
             }
 
-            yield \sprintf('%s.queries_count', $connectionName) => $statistics['queries_count'];
-
-            yield \sprintf('%s.distinct_queries_count', $connectionName) => $statistics['distinct_queries_count'];
-
-            yield \sprintf('%s.distinct_queries_ratio', $connectionName) => $statistics['distinct_queries_ratio'];
+            yield \sprintf('%s.stats', $connectionName) => [
+                'queries_count'          => $statistics['queries_count'],
+                'distinct_queries_count' => $statistics['distinct_queries_count'],
+                'distinct_queries_ratio' => $statistics['distinct_queries_ratio'],
+            ];
         }
     }
 
