@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 /**
+ * @covers \Miquido\RequestDataCollector\Collectors\RequestResponseCollector
  * @coversDefaultClass \Miquido\RequestDataCollector\Collectors\RequestResponseCollector
  */
 class RequestResponseCollectorTest extends TestCase
@@ -41,12 +42,12 @@ class RequestResponseCollectorTest extends TestCase
     ];
 
     /**
-     * @var \Illuminate\Http\Request&\Symfony\Component\HttpFoundation\Request&\Prophecy\Prophecy\ObjectProphecy
+     * @var \Illuminate\Http\Request|\Prophecy\Prophecy\ObjectProphecy|\Symfony\Component\HttpFoundation\Request
      */
     private $requestProphecy;
 
     /**
-     * @var \Illuminate\Http\Response&\Symfony\Component\HttpFoundation\Response&\Prophecy\Prophecy\ObjectProphecy
+     * @var \Illuminate\Http\Response|\Prophecy\Prophecy\ObjectProphecy|\Symfony\Component\HttpFoundation\Response
      */
     private $responseProphecy;
 
@@ -56,7 +57,7 @@ class RequestResponseCollectorTest extends TestCase
     private $requestResponseCollector;
 
     /**
-     * @var \Symfony\Component\HttpFoundation\ParameterBag&\Prophecy\Prophecy\ObjectProphecy
+     * @var \Prophecy\Prophecy\ObjectProphecy|\Symfony\Component\HttpFoundation\ParameterBag
      */
     private $parameterBagProphecy;
 
@@ -116,22 +117,22 @@ class RequestResponseCollectorTest extends TestCase
     public function testSimpleCollectMethod(): void
     {
         /**
-         * @var \Symfony\Component\HttpFoundation\ParameterBag&\Prophecy\Prophecy\ObjectProphecy $parameterBagProphecy_get
+         * @var \Prophecy\Prophecy\ObjectProphecy|\Symfony\Component\HttpFoundation\ParameterBag $parameterBagProphecy_get
          */
         $parameterBagProphecy_get = $this->prophesize(ParameterBag::class);
 
         /**
-         * @var \Symfony\Component\HttpFoundation\ParameterBag&\Prophecy\Prophecy\ObjectProphecy $parameterBagProphecy_post
+         * @var \Prophecy\Prophecy\ObjectProphecy|\Symfony\Component\HttpFoundation\ParameterBag $parameterBagProphecy_post
          */
         $parameterBagProphecy_post = $this->prophesize(ParameterBag::class);
 
         /**
-         * @var \Symfony\Component\HttpFoundation\ParameterBag&\Prophecy\Prophecy\ObjectProphecy $parameterBagProphecy_server
+         * @var \Prophecy\Prophecy\ObjectProphecy|\Symfony\Component\HttpFoundation\ParameterBag $parameterBagProphecy_server
          */
         $parameterBagProphecy_server = $this->prophesize(ParameterBag::class);
 
         /**
-         * @var \Symfony\Component\HttpFoundation\ParameterBag&\Prophecy\Prophecy\ObjectProphecy $parameterBagProphecy_cookie
+         * @var \Prophecy\Prophecy\ObjectProphecy|\Symfony\Component\HttpFoundation\ParameterBag $parameterBagProphecy_cookie
          */
         $parameterBagProphecy_cookie = $this->prophesize(ParameterBag::class);
 
@@ -249,7 +250,7 @@ class RequestResponseCollectorTest extends TestCase
         $this->requestProphecy->ip()->shouldBeCalled()->willReturn('testValue11');
         $this->requestProphecy->ips()->shouldBeCalled()->willReturn('testValue12');
 
-        /** @var \Illuminate\Routing\Route&\Symfony\Component\HttpFoundation\Request&\Prophecy\Prophecy\ObjectProphecy $route */
+        /** @var \Illuminate\Routing\Route|\Prophecy\Prophecy\ObjectProphecy|\Symfony\Component\HttpFoundation\Request $route */
         $route = $this->prophesize(Route::class);
 
         $routeValues = [

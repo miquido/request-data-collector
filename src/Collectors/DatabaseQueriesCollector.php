@@ -7,9 +7,10 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Events\QueryExecuted;
 use Miquido\RequestDataCollector\Collectors\Contracts\ConfigurableInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface;
+use Miquido\RequestDataCollector\Collectors\Contracts\SupportsSeparateLogEntriesInterface;
 use Miquido\RequestDataCollector\Traits\ConfigurableTrait;
 
-class DatabaseQueriesCollector implements DataCollectorInterface, ConfigurableInterface
+class DatabaseQueriesCollector implements DataCollectorInterface, ConfigurableInterface, SupportsSeparateLogEntriesInterface
 {
     use ConfigurableTrait {
         ConfigurableTrait::setConfig as setConfigTrait;
@@ -73,6 +74,21 @@ class DatabaseQueriesCollector implements DataCollectorInterface, ConfigurableIn
         }
 
         return $this->queryLog;
+    }
+
+    public function getSeparateLogEntries(array $collected): iterable
+    {
+        foreach ($collected as $connectionName => $statistics) {
+            foreach ($statistics['queries'] as $index => $query) {
+                yield \sprintf('%s.query.%d', $connectionName, $index) => $query;
+            }
+
+            yield \sprintf('%s.stats', $connectionName) => [
+                'queries_count'          => $statistics['queries_count'],
+                'distinct_queries_count' => $statistics['distinct_queries_count'],
+                'distinct_queries_ratio' => $statistics['distinct_queries_ratio'],
+            ];
+        }
     }
 
     private function getConnectionName(?string $name): string

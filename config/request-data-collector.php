@@ -46,6 +46,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Logging format
+    |--------------------------------------------------------------------------
+    |
+    | Determines whether collected statistics should be logged in single log
+    | entry or separately. This is global setting. It will be applied only to
+    | collectors supporting this feature and can be individually overridden.
+    |
+    | Available values (also as RequestDataCollector::LOGGING_FORMAT_*):
+    | - single   - single log entry is produced.
+    | - separate - collected statistics are logged in separate entries.
+    |
+    */
+    'logging_format' => env('REQUESTS_DATA_COLLECTOR_LOGGING_FORMAT', \Miquido\RequestDataCollector\RequestDataCollector::LOGGING_FORMAT_SINGLE),
+
+    /*
+    |--------------------------------------------------------------------------
     | Channel
     |--------------------------------------------------------------------------
     |
@@ -139,6 +155,12 @@ return [
             'connections' => [
                 null,   // Default connection
             ],
+
+            /*
+             * You can override global logging format here.
+             * If null, global logging format is used.
+             */
+            'logging_format' => null,
         ],
     ],
 ];

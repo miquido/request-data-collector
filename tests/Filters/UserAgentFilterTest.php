@@ -8,6 +8,7 @@ use Miquido\RequestDataCollector\Filters\UserAgentFilter;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @covers \Miquido\RequestDataCollector\Filters\UserAgentFilter
  * @coversDefaultClass \Miquido\RequestDataCollector\Filters\UserAgentFilter
  */
 class UserAgentFilterTest extends TestCase
@@ -87,7 +88,7 @@ class UserAgentFilterTest extends TestCase
     private function assertGotRequest(string $userAgent): Request
     {
         /**
-         * @var \Illuminate\Http\Request&\Prophecy\Prophecy\ObjectProphecy $requestProphecy
+         * @var \Illuminate\Http\Request|\Prophecy\Prophecy\ObjectProphecy $requestProphecy
          */
         $requestProphecy = $this->prophesize(Request::class);
 

@@ -9,11 +9,16 @@ use Illuminate\Log\LogManager;
 use Miquido\RequestDataCollector\Collectors\Contracts\ConfigurableInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\ModifiesContainerInterface;
+use Miquido\RequestDataCollector\Collectors\Contracts\SupportsSeparateLogEntriesInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\UsesResponseInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class RequestDataCollector
 {
+    public const LOGGING_FORMAT_SINGLE = 'single';
+
+    public const LOGGING_FORMAT_SEPARATE = 'separate';
+
     /**
      * @var float
      */
@@ -94,9 +99,6 @@ class RequestDataCollector
      */
     public function collect(Response $response): void
     {
-        /**
-         * @var \Psr\Log\LoggerInterface $channel
-         */
         $channel = $this->logger->channel($this->config['channel']);
 
         foreach ($this->collectors as $collectorName => $collector) {
@@ -104,7 +106,19 @@ class RequestDataCollector
                 $collector->setResponse($response);
             }
 
-            $channel->debug(\sprintf('request-data-collector.%s.%s', $collectorName, $this->requestId), $collector->collect());
+            $collected = $collector->collect();
+
+            if (
+                !empty($collected) &&
+                $collector instanceof SupportsSeparateLogEntriesInterface &&
+                self::LOGGING_FORMAT_SEPARATE === ($collector->getConfig('logging_format') ?? $this->config['logging_format'] ?? self::LOGGING_FORMAT_SINGLE)
+            ) {
+                foreach ($collector->getSeparateLogEntries($collected) as $index => $entry) {
+                    $channel->debug(\sprintf('request-data-collector.%s.%s.%s', $collectorName, $index, $this->requestId), $entry);
+                }
+            } else {
+                $channel->debug(\sprintf('request-data-collector.%s.%s', $collectorName, $this->requestId), $collected);
+            }
         }
     }
 
@@ -180,7 +194,7 @@ class RequestDataCollector
 
     private function configureCollectors(): void
     {
-        foreach ($this->config['collectors'] as $collectorName => $enabled) {
+        foreach ($this->config['collectors'] ?? [] as $collectorName => $enabled) {
             if (!$enabled) {
                 continue;
             }

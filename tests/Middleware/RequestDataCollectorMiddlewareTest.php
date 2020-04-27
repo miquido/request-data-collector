@@ -15,17 +15,18 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 /**
+ * @covers \Miquido\RequestDataCollector\Middleware\RequestDataCollectorMiddleware
  * @coversDefaultClass \Miquido\RequestDataCollector\Middleware\RequestDataCollectorMiddleware
  */
 class RequestDataCollectorMiddlewareTest extends TestCase
 {
     /**
-     * @var \Illuminate\Contracts\Container\Container&\Prophecy\Prophecy\ObjectProphecy
+     * @var \Illuminate\Contracts\Container\Container|\Prophecy\Prophecy\ObjectProphecy
      */
     private $containerProphecy;
 
     /**
-     * @var \Miquido\RequestDataCollector\RequestDataCollector&\Prophecy\Prophecy\ObjectProphecy
+     * @var \Miquido\RequestDataCollector\RequestDataCollector|\Prophecy\Prophecy\ObjectProphecy
      */
     private $requestDataCollectorProphecy;
 
@@ -137,7 +138,7 @@ class RequestDataCollectorMiddlewareTest extends TestCase
         $this->assertRequestIsNotExcluded();
 
         /**
-         * @var \Illuminate\Contracts\Debug\ExceptionHandler&\Prophecy\Prophecy\ObjectProphecy $exceptionHandlerProphecy
+         * @var \Illuminate\Contracts\Debug\ExceptionHandler|\Prophecy\Prophecy\ObjectProphecy $exceptionHandlerProphecy
          */
         $exceptionHandlerProphecy = $this->prophesize(ExceptionHandler::class);
 
@@ -190,7 +191,7 @@ class RequestDataCollectorMiddlewareTest extends TestCase
     }
 
     /**
-     * @return \Symfony\Component\HttpFoundation\ResponseHeaderBag&\Prophecy\Prophecy\ObjectProphecy
+     * @return \Prophecy\Prophecy\ObjectProphecy|\Symfony\Component\HttpFoundation\ResponseHeaderBag
      */
     private function assertResponseHasHeaderBag(): ObjectProphecy
     {
