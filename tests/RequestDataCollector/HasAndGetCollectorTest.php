@@ -7,6 +7,7 @@ use Miquido\RequestDataCollector\Collectors\Contracts\ConfigurableInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\ModifiesContainerInterface;
 use Miquido\RequestDataCollector\RequestDataCollector;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @covers \Miquido\RequestDataCollector\RequestDataCollector
@@ -14,6 +15,8 @@ use Miquido\RequestDataCollector\RequestDataCollector;
  */
 class HasAndGetCollectorTest extends AbstractRequestDataCollectorTest
 {
+    use ProphecyTrait;
+
     public function testHasAndGetCollector(): void
     {
         $testCollector1Driver = '\\Test\\Collector\\1';

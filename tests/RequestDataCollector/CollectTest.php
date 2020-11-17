@@ -8,6 +8,7 @@ use Miquido\RequestDataCollector\Collectors\Contracts\SupportsSeparateLogEntries
 use Miquido\RequestDataCollector\Collectors\Contracts\UsesResponseInterface;
 use Miquido\RequestDataCollector\RequestDataCollector;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,6 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CollectTest extends AbstractRequestDataCollectorTest
 {
+    use ProphecyTrait;
+
     /**
      * @var \Prophecy\Prophecy\ObjectProphecy|\Psr\Log\LoggerInterface
      */

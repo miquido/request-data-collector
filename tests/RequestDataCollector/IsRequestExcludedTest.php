@@ -6,6 +6,7 @@ namespace Miquido\RequestDataCollector\Tests\RequestDataCollector;
 use Illuminate\Http\Request;
 use Miquido\RequestDataCollector\Filters\Contracts\FilterInterface;
 use Miquido\RequestDataCollector\RequestDataCollector;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @covers \Miquido\RequestDataCollector\RequestDataCollector
@@ -13,6 +14,8 @@ use Miquido\RequestDataCollector\RequestDataCollector;
  */
 class IsRequestExcludedTest extends AbstractRequestDataCollectorTest
 {
+    use ProphecyTrait;
+
     public function testIsRequestExcluded(): void
     {
         $filter1Class = '\\Test\\Filter\\1';
