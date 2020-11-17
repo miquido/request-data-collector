@@ -7,6 +7,7 @@ use Miquido\RequestDataCollector\Collectors\Contracts\ConfigurableInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\ModifiesContainerInterface;
 use Miquido\RequestDataCollector\RequestDataCollector;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
 /**
@@ -15,6 +16,8 @@ use Prophecy\Prophecy\ObjectProphecy;
  */
 class ConfigureCollectorsTest extends AbstractRequestDataCollectorTest
 {
+    use ProphecyTrait;
+
     public function testDisabledCollectorIsSkipped(): void
     {
         $disabledCollectorDriver = '\\Test\\Collector\\1';

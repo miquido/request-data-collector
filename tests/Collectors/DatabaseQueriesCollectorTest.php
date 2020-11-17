@@ -9,6 +9,7 @@ use Illuminate\Database\Events\QueryExecuted;
 use Miquido\RequestDataCollector\Collectors\DatabaseQueriesCollector;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
 /**
@@ -17,6 +18,8 @@ use Prophecy\Prophecy\ObjectProphecy;
  */
 class DatabaseQueriesCollectorTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var \Illuminate\Database\DatabaseManager|\Prophecy\Prophecy\ObjectProphecy
      */

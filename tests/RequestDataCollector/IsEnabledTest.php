@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Miquido\RequestDataCollector\Tests\RequestDataCollector;
 
 use Miquido\RequestDataCollector\RequestDataCollector;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @covers \Miquido\RequestDataCollector\RequestDataCollector
@@ -11,6 +12,8 @@ use Miquido\RequestDataCollector\RequestDataCollector;
  */
 class IsEnabledTest extends AbstractRequestDataCollectorTest
 {
+    use ProphecyTrait;
+
     /**
      * Provides a set of valid values for 'enabled' option.
      */

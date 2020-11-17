@@ -11,6 +11,7 @@ use Illuminate\Http\Response;
 use Miquido\RequestDataCollector\Middleware\RequestDataCollectorMiddleware;
 use Miquido\RequestDataCollector\RequestDataCollector;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
@@ -20,6 +21,8 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
  */
 class RequestDataCollectorMiddlewareTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var \Illuminate\Contracts\Container\Container|\Prophecy\Prophecy\ObjectProphecy
      */

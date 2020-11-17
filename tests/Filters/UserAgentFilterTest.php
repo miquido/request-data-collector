@@ -6,6 +6,7 @@ namespace Miquido\RequestDataCollector\Tests\Filters;
 use Illuminate\Http\Request;
 use Miquido\RequestDataCollector\Filters\UserAgentFilter;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @covers \Miquido\RequestDataCollector\Filters\UserAgentFilter
@@ -13,6 +14,8 @@ use PHPUnit\Framework\TestCase;
  */
 class UserAgentFilterTest extends TestCase
 {
+    use ProphecyTrait;
+
     private const USER_AGENTS = [
         'UserAgent A',
         'UserAgent 2',

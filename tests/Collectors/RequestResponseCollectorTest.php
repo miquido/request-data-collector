@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Route;
 use Miquido\RequestDataCollector\Collectors\RequestResponseCollector;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -19,6 +20,8 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
  */
 class RequestResponseCollectorTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $response = [
         '_GET'     => ['g' => 'g'],
         '_POST'    => ['p' => 'p'],

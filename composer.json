@@ -43,7 +43,8 @@
         "nesbot/carbon": "^1.26.3 || ^2.0",
         "phpstan/phpstan": "^0.12.19",
         "phpstan/phpstan-phpunit": "^0.12.8",
-        "phpunit/phpunit": "^8.5",
+        "phpspec/prophecy-phpunit": "^2.0",
+        "phpunit/phpunit": "^9.4",
         "roave/security-advisories": "dev-master",
         "symfony/var-dumper": "^5.0"
     },
