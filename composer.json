@@ -28,25 +28,24 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=7.3",
-        "illuminate/contracts": "~5.6|^6.0",
-        "illuminate/database": "~5.6|^6.0",
-        "illuminate/log": "~5.6|^6.0",
-        "illuminate/routing": "~5.6|^6.0",
-        "illuminate/support": "~5.6|^6.0"
+        "illuminate/contracts": "~5.6|^6.0|^7.0|^8.0",
+        "illuminate/database": "~5.6|^6.0|^7.0|^8.0",
+        "illuminate/log": "~5.6|^6.0|^7.0|^8.0",
+        "illuminate/routing": "~5.6|^6.0|^7.0|^8.0",
+        "illuminate/support": "~5.6|^6.0|^7.0|^8.0"
     },
     "suggest": {
         "miquido/request-data-collector-guzzle": "Allows collecting Guzzle requests",
         "miquido/request-data-collector-elasticsearch": "Allows collecting Elasticsearch requests"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.16.3",
+        "friendsofphp/php-cs-fixer": "^2.16.7",
         "nesbot/carbon": "^1.26.3 || ^2.0",
-        "phpstan/phpstan": "^0.12.19",
-        "phpstan/phpstan-phpunit": "^0.12.8",
-        "phpspec/prophecy-phpunit": "^2.0",
+        "phpstan/phpstan": "^0.12.56",
+        "phpstan/phpstan-phpunit": "^0.12.16",
         "phpunit/phpunit": "^9.4",
         "roave/security-advisories": "dev-master",
-        "symfony/var-dumper": "^5.0"
+        "symfony/var-dumper": "^5.1"
     },
     "autoload": {
         "psr-4": {
