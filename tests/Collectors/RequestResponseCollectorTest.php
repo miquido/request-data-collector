@@ -273,7 +273,7 @@ class RequestResponseCollectorTest extends TestCase
         $route->methods = $routeValues['methods'];
         $route->action = $routeValues['action'];
         $route->isFallback = $routeValues['isFallback'];
-        $route->getController()->shouldBeCalled()->willReturn(new self());
+        $route->getActionName()->shouldBeCalled()->willReturn(__CLASS__);
         $route->defaults = $routeValues['defaults'];
         $route->wheres = $routeValues['wheres'];
         $route->parameters = $routeValues['parameters'];

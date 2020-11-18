@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Miquido\RequestDataCollector\Collectors;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Miquido\RequestDataCollector\Collectors\Contracts\ConfigurableInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\DataCollectorInterface;
 use Miquido\RequestDataCollector\Collectors\Contracts\UsesResponseInterface;
@@ -162,13 +163,13 @@ class RequestResponseCollector implements DataCollectorInterface, ConfigurableIn
 
             $data[self::REQUEST_INFO_ROUTE] = null;
 
-            if (null !== $route) {
+            if ($route instanceof Route) {
                 $data[self::REQUEST_INFO_ROUTE] = [
                     'uri'                => $route->uri,
                     'methods'            => $route->methods,
                     'action'             => $route->action,
                     'isFallback'         => $route->isFallback,
-                    'controller'         => \get_class($route->getController()),
+                    'controller'         => $route->getActionName(),
                     'defaults'           => $route->defaults,
                     'wheres'             => $route->wheres,
                     'parameters'         => $route->parameters,
