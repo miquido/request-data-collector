@@ -27,7 +27,7 @@
     "homepage": "https://github.com/miquido/request-data-collector",
     "license": "Apache-2.0",
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.3",
         "illuminate/contracts": "~5.6|^6.0",
         "illuminate/database": "~5.6|^6.0",
         "illuminate/log": "~5.6|^6.0",
