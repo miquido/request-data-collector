@@ -25,10 +25,14 @@ env:
     - DEPENDENCIES="lowest"   LARAVEL="5.7.*"
     - DEPENDENCIES="lowest"   LARAVEL="5.8.*"
     - DEPENDENCIES="lowest"   LARAVEL="^6.0"
+    - DEPENDENCIES="lowest"   LARAVEL="^7.0"
+    - DEPENDENCIES="lowest"   LARAVEL="^8.0"
     - DEPENDENCIES="highest"  LARAVEL="5.6.*"
     - DEPENDENCIES="highest"  LARAVEL="5.7.*"
     - DEPENDENCIES="highest"  LARAVEL="5.8.*"
     - DEPENDENCIES="highest"  LARAVEL="^6.0"
+    - DEPENDENCIES="highest"  LARAVEL="^7.0"
+    - DEPENDENCIES="highest"  LARAVEL="^8.0"
   global:
     - DEFAULT_COMPOSER_FLAGS="--no-interaction --no-ansi --no-progress --no-suggest --no-scripts --optimize-autoloader --classmap-authoritative"
 
