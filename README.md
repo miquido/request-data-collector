@@ -7,7 +7,8 @@ This package aims to work as a zero-configuration. Although there are default co
 When using this package, every handled request (i.e. not excluded according to `exclusions` rules) will contain `X-Request-Id` header in the response. You can use this ID to correlate various collectors' data.
 
 [![GitHub license](https://img.shields.io/badge/license-Apache2.0-brightgreen.svg)](https://github.com/miquido/request-data-collector/blob/master/LICENSE)
-[![Build](https://travis-ci.org/miquido/request-data-collector.svg?branch=master)](https://travis-ci.org/miquido/request-data-collector)
+[![Build](https://github.com/miquido/request-data-collector/workflows/PHP/badge.svg?branch=master)](https://github.com/miquido/request-data-collector/actions?query=branch%3Amaster)
+
 
 ## Set up
 
