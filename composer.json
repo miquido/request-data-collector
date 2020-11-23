@@ -45,7 +45,6 @@
         "phpstan/phpstan": "^0.12.56",
         "phpstan/phpstan-phpunit": "^0.12.16",
         "phpunit/phpunit": "^9.4",
-        "roave/security-advisories": "dev-master",
         "symfony/var-dumper": "^5.1"
     },
     "autoload": {
@@ -80,7 +79,7 @@
             "phpstan analyse -l 1 tests -c phpstan.tests.neon --memory-limit=512M --ansi"
         ],
         "test-unit": [
-            "phpunit --colors=always"
+            "phpunit --colors=auto"
         ],
         "test": [
             "@cs-check",

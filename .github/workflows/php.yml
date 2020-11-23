@@ -1,0 +1,78 @@
+# https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+
+name: PHP
+
+on:
+  - push
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        operating-system:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+
+        php-version:
+          - '7.3'
+          - '7.4'
+
+        dependencies:
+          - 'lowest'
+          - 'highest'
+
+        laravel-version:
+          - '5.6.*'
+          - '5.7.*'
+          - '5.8.*'
+          - '^6.0'
+          - '^7.0'
+          - '^8.0'
+
+    runs-on: ${{ matrix.operating-system }}
+    name: PHP ${{ matrix.php-version }} Test on ${{ matrix.operating-system }} with Laravel ${{ matrix.laravel-version }} and ${{ matrix.dependencies }} dependencies
+
+    steps:
+      - name: Configure git to avoid issues with line endings
+        if: matrix.operating-system == 'windows-latest'
+        run: git config --global core.autocrlf false
+
+      - name: Checkout project files
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: xdebug
+          tools: composer:v2
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: php-${{ matrix.php-version }}-dependencies-${{ matrix.dependencies }}-laravel-${{ matrix.laravel-version }}-${{ hashFiles('**/composer.json') }}
+          restore-keys: php-${{ matrix.php-version }}-dependencies-${{ matrix.dependencies }}-laravel-${{ matrix.laravel-version }}-
+
+      - name: Install lowest dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true' && matrix.dependencies == 'lowest'
+        run: composer require "illuminate/contracts:${{ matrix.laravel-version }}" "illuminate/database:${{ matrix.laravel-version }}" "illuminate/log:${{ matrix.laravel-version }}" "illuminate/routing:${{ matrix.laravel-version }}" "illuminate/support:${{ matrix.laravel-version }}" --no-interaction --no-ansi --no-progress --no-scripts --optimize-autoloader --classmap-authoritative --prefer-lowest
+
+      - name: Install highest dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true' && matrix.dependencies == 'highest'
+        run: composer require "illuminate/contracts:${{ matrix.laravel-version }}" "illuminate/database:${{ matrix.laravel-version }}" "illuminate/log:${{ matrix.laravel-version }}" "illuminate/routing:${{ matrix.laravel-version }}" "illuminate/support:${{ matrix.laravel-version }}" --no-interaction --no-ansi --no-progress --no-scripts --optimize-autoloader --classmap-authoritative
+
+      - name: Check Code Style
+        run: composer cs-check
+
+      - name: Run static analysis
+        run: composer code-analyse
+
+      - name: Run Unit tests
+        run: composer test-unit
