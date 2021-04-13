@@ -42,10 +42,10 @@
         "friendsofphp/php-cs-fixer": "^2.18.5",
         "nesbot/carbon": "^1.26.3|^2.0",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/phpstan": "^0.12.56",
-        "phpstan/phpstan-phpunit": "^0.12.16",
-        "phpunit/phpunit": "^9.4",
-        "symfony/var-dumper": "^5.1"
+        "phpstan/phpstan": "^0.12.83",
+        "phpstan/phpstan-phpunit": "^0.12.18",
+        "phpunit/phpunit": "^9.5",
+        "symfony/var-dumper": "^5.2"
     },
     "autoload": {
         "psr-4": {
