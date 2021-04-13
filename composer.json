@@ -39,7 +39,7 @@
         "miquido/request-data-collector-elasticsearch": "Allows collecting Elasticsearch requests"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.16.7",
+        "friendsofphp/php-cs-fixer": "^2.18.5",
         "nesbot/carbon": "^1.26.3|^2.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^0.12.56",
