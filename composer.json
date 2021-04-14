@@ -27,7 +27,7 @@
     "homepage": "https://github.com/miquido/request-data-collector",
     "license": "Apache-2.0",
     "require": {
-        "php": ">=7.3",
+        "php": "^7.3|^8.0",
         "illuminate/contracts": "~5.6|^6.0|^7.0|^8.0",
         "illuminate/database": "~5.6|^6.0|^7.0|^8.0",
         "illuminate/log": "~5.6|^6.0|^7.0|^8.0",
@@ -39,13 +39,13 @@
         "miquido/request-data-collector-elasticsearch": "Allows collecting Elasticsearch requests"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.16.7",
-        "nesbot/carbon": "^1.26.3 || ^2.0",
+        "friendsofphp/php-cs-fixer": "^2.18.5",
+        "nesbot/carbon": "^1.26.3|^2.0",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/phpstan": "^0.12.56",
-        "phpstan/phpstan-phpunit": "^0.12.16",
-        "phpunit/phpunit": "^9.4",
-        "symfony/var-dumper": "^5.1"
+        "phpstan/phpstan": "^0.12.83",
+        "phpstan/phpstan-phpunit": "^0.12.18",
+        "phpunit/phpunit": "^9.5",
+        "symfony/var-dumper": "^5.2"
     },
     "autoload": {
         "psr-4": {
@@ -66,7 +66,7 @@
     },
     "scripts": {
         "cs-check": [
-            "php-cs-fixer fix -v --diff --dry-run --stop-on-violation --ansi"
+            "php-cs-fixer fix -v --diff --dry-run --stop-on-violation --ansi --verbose"
         ],
         "lint": [
             "php-cs-fixer fix -v --dry-run --diff --ansi"
@@ -75,8 +75,8 @@
             "php-cs-fixer fix -v --ansi"
         ],
         "code-analyse": [
-            "phpstan analyse -l 1 src --memory-limit=512M --ansi",
-            "phpstan analyse -l 1 tests -c phpstan.tests.neon --memory-limit=512M --ansi"
+            "phpstan analyse -l 1 src --memory-limit=512M --ansi --verbose",
+            "phpstan analyse -l 1 tests -c phpstan.tests.neon --memory-limit=512M --ansi --verbose"
         ],
         "test-unit": [
             "phpunit --colors=auto"

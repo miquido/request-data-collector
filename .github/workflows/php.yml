@@ -11,13 +11,14 @@ jobs:
     strategy:
       matrix:
         operating-system:
-          - ubuntu-latest
-          - windows-latest
-          - macos-latest
+          - 'ubuntu-latest'
+          - 'windows-latest'
+          - 'macos-latest'
 
         php-version:
           - '7.3'
           - '7.4'
+          - '8.0'
 
         dependencies:
           - 'lowest'
@@ -27,9 +28,19 @@ jobs:
           - '5.6.*'
           - '5.7.*'
           - '5.8.*'
-          - '^6.0'
-          - '^7.0'
-          - '^8.0'
+          - '6.*'
+          - '7.*'
+          - '8.*'
+
+        exclude:
+          - php-version: '8.0'
+            laravel-version: '5.6.*'
+
+          - php-version: '8.0'
+            laravel-version: '5.7.*'
+
+          - php-version: '8.0'
+            laravel-version: '5.8.*'
 
     runs-on: ${{ matrix.operating-system }}
     name: PHP ${{ matrix.php-version }} Test on ${{ matrix.operating-system }} with Laravel ${{ matrix.laravel-version }} and ${{ matrix.dependencies }} dependencies
@@ -54,19 +65,18 @@ jobs:
 
       - name: Cache Composer packages
         id: composer-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v2.1.5
         with:
           path: vendor
           key: php-${{ matrix.php-version }}-dependencies-${{ matrix.dependencies }}-laravel-${{ matrix.laravel-version }}-${{ hashFiles('**/composer.json') }}
-          restore-keys: php-${{ matrix.php-version }}-dependencies-${{ matrix.dependencies }}-laravel-${{ matrix.laravel-version }}-
 
       - name: Install lowest dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true' && matrix.dependencies == 'lowest'
-        run: composer require "illuminate/contracts:${{ matrix.laravel-version }}" "illuminate/database:${{ matrix.laravel-version }}" "illuminate/log:${{ matrix.laravel-version }}" "illuminate/routing:${{ matrix.laravel-version }}" "illuminate/support:${{ matrix.laravel-version }}" --no-interaction --no-ansi --no-progress --no-scripts --optimize-autoloader --classmap-authoritative --prefer-lowest
+        run: composer require "illuminate/contracts:${{ matrix.laravel-version }}" "illuminate/database:${{ matrix.laravel-version }}" "illuminate/log:${{ matrix.laravel-version }}" "illuminate/routing:${{ matrix.laravel-version }}" "illuminate/support:${{ matrix.laravel-version }}" --no-interaction --no-ansi --no-progress --no-scripts --optimize-autoloader --classmap-authoritative --update-with-all-dependencies --prefer-lowest
 
       - name: Install highest dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true' && matrix.dependencies == 'highest'
-        run: composer require "illuminate/contracts:${{ matrix.laravel-version }}" "illuminate/database:${{ matrix.laravel-version }}" "illuminate/log:${{ matrix.laravel-version }}" "illuminate/routing:${{ matrix.laravel-version }}" "illuminate/support:${{ matrix.laravel-version }}" --no-interaction --no-ansi --no-progress --no-scripts --optimize-autoloader --classmap-authoritative
+        run: composer require "illuminate/contracts:${{ matrix.laravel-version }}" "illuminate/database:${{ matrix.laravel-version }}" "illuminate/log:${{ matrix.laravel-version }}" "illuminate/routing:${{ matrix.laravel-version }}" "illuminate/support:${{ matrix.laravel-version }}" --no-interaction --no-ansi --no-progress --no-scripts --optimize-autoloader --classmap-authoritative --update-with-all-dependencies
 
       - name: Check Code Style
         run: composer cs-check
