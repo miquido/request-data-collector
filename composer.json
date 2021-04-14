@@ -66,7 +66,7 @@
     },
     "scripts": {
         "cs-check": [
-            "php-cs-fixer fix -v --diff --dry-run --stop-on-violation --ansi"
+            "php-cs-fixer fix -v --diff --dry-run --stop-on-violation --ansi --verbose"
         ],
         "lint": [
             "php-cs-fixer fix -v --dry-run --diff --ansi"
@@ -75,8 +75,8 @@
             "php-cs-fixer fix -v --ansi"
         ],
         "code-analyse": [
-            "phpstan analyse -l 1 src --memory-limit=512M --ansi",
-            "phpstan analyse -l 1 tests -c phpstan.tests.neon --memory-limit=512M --ansi"
+            "phpstan analyse -l 1 src --memory-limit=512M --ansi --verbose",
+            "phpstan analyse -l 1 tests -c phpstan.tests.neon --memory-limit=512M --ansi --verbose"
         ],
         "test-unit": [
             "phpunit --colors=auto"
