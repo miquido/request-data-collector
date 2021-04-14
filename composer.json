@@ -28,11 +28,11 @@
     "license": "Apache-2.0",
     "require": {
         "php": "^7.3|^8.0",
-        "illuminate/contracts": "^6.0|^7.0|^8.0",
-        "illuminate/database": "^6.0|^7.0|^8.0",
-        "illuminate/log": "^6.0|^7.0|^8.0",
-        "illuminate/routing": "^6.0|^7.0|^8.0",
-        "illuminate/support": "^6.0|^7.0|^8.0"
+        "illuminate/contracts": "~5.6|^6.0|^7.0|^8.0",
+        "illuminate/database": "~5.6|^6.0|^7.0|^8.0",
+        "illuminate/log": "~5.6|^6.0|^7.0|^8.0",
+        "illuminate/routing": "~5.6|^6.0|^7.0|^8.0",
+        "illuminate/support": "~5.6|^6.0|^7.0|^8.0"
     },
     "suggest": {
         "miquido/request-data-collector-guzzle": "Allows collecting Guzzle requests",
