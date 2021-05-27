@@ -75,8 +75,8 @@
             "php-cs-fixer fix -v --ansi"
         ],
         "code-analyse": [
-            "phpstan analyse -l 1 src --memory-limit=512M --ansi --verbose",
-            "phpstan analyse -l 1 tests -c phpstan.tests.neon --memory-limit=512M --ansi --verbose"
+            "phpstan analyse --memory-limit=512M --ansi --verbose",
+            "phpstan analyse --configuration=phpstan.tests.neon --memory-limit=512M --ansi --verbose"
         ],
         "test-unit": [
             "phpunit --colors=auto"
