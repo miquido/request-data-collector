@@ -216,3 +216,7 @@ By default, tracking is enabled. However, it can be disabled:
 ```ini
 REQUESTS_DATA_COLLECTOR_ALLOW_TRACKING=false
 ```
+
+## About
+
+The project was made by Miquido: https://www.miquido.com
